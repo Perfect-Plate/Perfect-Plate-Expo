@@ -1,7 +1,10 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function SignUpScreen() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       {/* Image at the top */}
@@ -18,13 +21,13 @@ export default function SignUpScreen() {
 
       {/* Sign Up Button */}
       <TouchableOpacity style={styles.signUpButton}>
-        <Text style={styles.signUpButtonText}>Sign up</Text>
+        <Text style={styles.signUpButtonText}>Continue</Text>
       </TouchableOpacity>
 
       {/* Sign In Link */}
       <Text style={styles.signInText}>
         Already have an account?{' '}
-        <Text style={styles.signInLink}>Sign In</Text>
+        <Text style={styles.signInLink} onPress={() => router.push('/sign-in')}>Sign In</Text>
       </Text>
     </View>
   );
