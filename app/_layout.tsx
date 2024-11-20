@@ -35,6 +35,8 @@ export default function RootLayout() {
         <Stack initialRouteName="index">
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="nutrition" options={{ headerShown: false }} />
+          <Stack.Screen name="dietary" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
       </ThemeProvider>
