@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import OptionButton from './OptionButton'
-import NavBar from './NavBar';
+import NavBar from './NavBar2';
 import {
     View,
     Text,
@@ -9,10 +9,10 @@ import {
     ScrollView
 } from 'react-native';
 
-type Option = 'Keto' | 'Paleo' | 'Vegetarian' | 'Vegan' | 'Pescatarian' | 'None Necessary';
+type Option = 'Keto' | 'Paleo' | 'Vegetarian' | 'Vegan' | 'Pescatarian' | 'No preference';
 
 const DietaryPreferences: React.FC = () => {
-    const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+    const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
 
     const options: Option[] = [
         'Keto',
@@ -20,24 +20,32 @@ const DietaryPreferences: React.FC = () => {
         'Vegetarian',
         'Vegan',
         'Pescatarian',
-        'None Necessary'
+        'No preference'
     ];
 
     const handleSelectOption = (option: Option) => {
-        setSelectedOption(option);
+        setSelectedOptions((prev) => {
+            if (prev.includes(option)) {
+                // If already selected, remove it
+                return prev.filter((item) => item !== option);
+            } else {
+                // If not selected, add it
+                return [...prev, option];
+            }
+        });
     };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <NavBar/>
-            <Text style={styles.header}>Select Your Dietary Preferences</Text>
+            <Text style={styles.header}>Do you have any nutritional preferences?</Text>
             {options.map((option) => (
                 <OptionButton
                     key={option}
                     text={option}
-                    isSelected={selectedOption === option}
+                    isSelected={selectedOptions.includes(option)} // Check if this option is selected
                     onPress={() => handleSelectOption(option)}
-                    icon={selectedOption === option ? require('@/assets/images/yes.png') : undefined} // Adjust the path as necessary
+                    icon={selectedOptions.includes(option) ? require('@/assets/images/Yes.png') : undefined}
                 />
             ))}
             <TouchableOpacity style={styles.continueButton}>
@@ -51,24 +59,27 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#fff'
+        backgroundColor: '#EDE9E8'
     },
     header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        marginTop: 10,
-        textAlign: 'left'
+        color: '#1B1918', 
+        fontFamily: 'Poppins', 
+        fontSize: 34,
+        fontStyle: 'normal',
+        fontWeight: '500',
+        lineHeight: 36, 
+        letterSpacing: -0.56,
+        marginBottom: 20,
     },
     continueButton: {
-        backgroundColor: '#d20503',
+        backgroundColor: '#F4A691',
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',
-        marginTop: 30
+        marginTop: 130
     },
     continueButtonText: {
-        color: 'white',
+        color: 'black',
         //fontStyle: '700Bold',
         fontSize: 18,
         fontWeight: 'bold'

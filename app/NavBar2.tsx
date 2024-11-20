@@ -21,7 +21,7 @@ const NavBar: React.FC<NavBarProps> = ({ onBackPress }) => {
             <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
                 <Image source={require('@/assets/images/chevron-left.png')} style={styles.backButton} />
             </TouchableOpacity>
-            <Text style={styles.navHeader}>Nutritional preferences</Text>
+            <Text style={styles.navHeader}>Dietary preferences</Text>
             <Image source={require('@/assets/images/Frame.png')} style={styles.frameButton} />
         </View>
     );

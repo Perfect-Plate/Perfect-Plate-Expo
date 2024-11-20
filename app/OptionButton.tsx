@@ -27,29 +27,31 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#f9e7de', //color for button background
-        paddingVertical: 25,
+        backgroundColor: '#FFF', //color for button background
+        paddingVertical: 18,
         paddingHorizontal: 25,
-        borderRadius: 20,
-        borderWidth: 4,
+        borderRadius: 12,
+        borderWidth: 1,
         borderColor: '#ddd',
         marginBottom: 10,
     },
     selected: {
-        backgroundColor: '#f9e7de', // Highlight color when selected
+        borderColor: '#B9D774', // Highlight color when selected
     },
     text: {
         flex: 1,
         fontSize: 20,
         color: '#333',
-        textAlign: 'center',
-        fontWeight: 'bold'
+        textAlign: 'left',
+        fontWeight: 500,
+        fontStyle: 'normal',
+        fontFamily: "Poppins",
     },
     checkmark: {
-        width: 30,
-        height: 30,
+        width: 40,
+        height: 40,
         position: 'absolute',
-        right: 25, // Adjust according to your layout needs
+        right: 20, // Adjust according to your layout needs
     },
 });
 
