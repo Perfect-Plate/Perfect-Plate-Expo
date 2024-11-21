@@ -47,7 +47,7 @@ const DietaryPreferences: React.FC = () => {
                     text={option}
                     isSelected={selectedOptions.includes(option)} // Check if this option is selected
                     onPress={() => handleSelectOption(option)}
-                    icon={selectedOptions.includes(option) ? require('@/assets/images/Yes.png') : undefined}
+                    icon={selectedOptions.includes(option) ? require('@/assets/images/yes.png') : undefined}
                 />
             ))}
             <TouchableOpacity style={styles.continueButton} onPress={() => router.push('/calendar')}>
