@@ -34,8 +34,11 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack initialRouteName="index">
           <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
+          <Stack.Screen name="signIn" options={{ headerShown: false }} />
+          <Stack.Screen name="signUp" options={{ headerShown: false }} />
+          <Stack.Screen name="allergy" options={{ headerShown: false }} />
+          <Stack.Screen name="splitOption" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
   );

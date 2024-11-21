@@ -1,28 +1,93 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import React from "react";
+import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const router = useRouter();
 
+  // Helper function to randomize opacity
+  const getRandomOpacity = () => {
+    const opacities = [0.7, 0.6, 0.5, 0.4, 0.3];
+    return opacities[Math.floor(Math.random() * opacities.length)];
+  };
+
   return (
     <View style={styles.container}>
-      {/* Image at the top */}
-      <Image source={require('@/assets/images/Image.png')} style={styles.image} />
+      {/* Top Half with Images */}
+      <View style={styles.topSection}>
+        <ScrollView contentContainerStyle={styles.backdrop} horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.column}>
+            <Image
+              source={require("@/assets/images/food1.png")}
+              style={[styles.image, styles.imageLarge, { opacity: getRandomOpacity() }]}
+            />
+            <Image
+              source={require("@/assets/images/food2.png")}
+              style={[styles.image, styles.imageSmall, { opacity: getRandomOpacity() }]}
+            />
+            <Image
+              source={require("@/assets/images/food3.png")}
+              style={[styles.image, styles.imageSmall, { opacity: getRandomOpacity() }]}
+            />
+          </View>
+          <View style={styles.column}>
+            <Image
+              source={require("@/assets/images/food4.png")}
+              style={[styles.image, styles.imageMedium, { opacity: getRandomOpacity() }]}
+            />
+            <Image
+              source={require("@/assets/images/food5.png")}
+              style={[styles.image, styles.imageMedium, { opacity: getRandomOpacity() }]}
+            />
+            <Image
+              source={require("@/assets/images/food6.png")}
+              style={[styles.image, styles.imageMedium, styles.shadow, { opacity: getRandomOpacity() }]}
+            />
+          </View>
+          <View style={styles.column}>
+            <Image
+              source={require("@/assets/images/food7.png")}
+              style={[styles.image, styles.imageSmall, { opacity: getRandomOpacity() }]}
+            />
+            <Image
+              source={require("@/assets/images/food8.png")}
+              style={[styles.image, styles.imageLarge, { opacity: getRandomOpacity() }]}
+            />
+            <Image
+              source={require("@/assets/images/food9.png")}
+              style={[styles.image, styles.imageSmall, { opacity: getRandomOpacity() }]}
+            />
+          </View>
+        </ScrollView>
+      </View>
 
-      {/* Welcome Text */}
-      <Text style={styles.title}>Welcome to PerfectPlates!</Text>
+      {/* Bottom Half */}
+      <View style={styles.bottomSection}>
+        {/* Title */}
+        <Text style={styles.title}>PerfectPlates</Text>
+        <Text style={styles.subtitle}>
+          Personalized meal plans, perfectly crafted for you
+        </Text>
 
-      {/* Get Started Button */}
-      <TouchableOpacity style={styles.getStartedButton} onPress={() => router.push('/sign-up')}>
-        <Text style={styles.getStartedButtonText}>Get Started</Text>
-      </TouchableOpacity>
+        {/* Buttons */}
+        <View style={styles.buttonsContainer}>
+          {/* Get Started Button */}
+          <TouchableOpacity
+            style={styles.getStartedButton}
+            onPress={() => router.push("/allergy")}
+          >
+            <Text style={styles.getStartedButtonText}>Get started</Text>
+          </TouchableOpacity>
 
-      {/* Sign In Link */}
-      <Text style={styles.signInText}>
-        Already have an account?{' '}
-        <Text style={styles.signInLink} onPress={() => router.push('/sign-in')}>Sign In</Text>
-      </Text>
+          {/* Sign In Link */}
+          <View style={styles.signInContainer}>
+            <Text style={styles.signInText}>Already have an account? </Text>
+            <TouchableOpacity onPress={() => router.push("/signIn")}>
+              <Text style={styles.signInLink}>Sign in</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
     </View>
   );
 }
@@ -30,42 +95,110 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#EDE9E8",
+  },
+  topSection: {
+    flex: 1,
+  },
+  backdrop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingTop: 32,
+    paddingHorizontal: 16,
+  },
+  column: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 8,
   },
   image: {
-    width: 150,
-    height: 150,
-    marginBottom: 40,
+    borderRadius: 80,
+  },
+  imageLarge: {
+    height: 216,
+    width: 112,
+    borderWidth: 2,
+    borderColor: "#F4A691",
+  },
+  imageMedium: {
+    height: 144,
+    width: 112,
+    borderWidth: 2,
+    borderColor: "#B9D774",
+  },
+  imageSmall: {
+    height: 112,
+    width: 112,
+  },
+  shadow: {
+    shadowColor: "#B2A7A4",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+  },
+  bottomSection: {
+    flex: .80,
+    backgroundColor: "#FFF",
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    alignItems: "center",
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#000',
+    fontSize: 48,
+    fontFamily: "SavoyeLetPlain",
+    fontWeight: "400",
+    color: "#1B1918",
+    textAlign: "center",
+    lineHeight: 48,
+    paddingTop: 25,
+  },
+  subtitle: {
+    fontSize: 28,
+    fontFamily: "Poppins",
+    fontWeight: "500",
+    color: "#1B1918",
+    textAlign: "center",
+    lineHeight: 36,
+    marginTop: 16,
+  },
+  buttonsContainer: {
+    width: "100%",
+    marginTop: 32,
   },
   getStartedButton: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#E9443F',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
+    height: 48,
+    backgroundColor: "#F4A691",
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
   },
   getStartedButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: "#1B1918",
+    fontSize: 18,
+    fontFamily: "Poppins",
+    fontWeight: "500",
+    lineHeight: 24,
+  },
+  signInContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   signInText: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: "400",
+    color: "#1B1918",
+    lineHeight: 24,
   },
   signInLink: {
-    color: '#E9443F',
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: "400",
+    color: "#E36714",
+    lineHeight: 24,
   },
 });
