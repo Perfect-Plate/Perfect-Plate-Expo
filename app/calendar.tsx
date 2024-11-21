@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useRouter } from 'expo-router';
 import {
     View,
     Text,
@@ -13,6 +13,7 @@ const MealPlanningCalendar: React.FC = () => {
     const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth()); // 0-based
     const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
     const [selectedDays, setSelectedDays] = useState<number[]>([]); // Track selected days
+    const router = useRouter();
 
     // Helper to generate days for the current month
     const getDaysInMonth = (month: number, year: number) => {
@@ -105,7 +106,7 @@ const MealPlanningCalendar: React.FC = () => {
                 <View style={styles.navBar}>
                     <Text style={styles.navButtonBack}>{"<"} </Text>
                     <Text style={styles.headerTitle}>Meal Planning - Calendar</Text>
-                    
+
                 </View>
                 <Text style={styles.mainHeading}>Which days would you like to plan meals for?</Text>
                 <Text style={styles.notation}>Choose specific days, or select a time range</Text>
@@ -165,7 +166,7 @@ const MealPlanningCalendar: React.FC = () => {
                 <Text style={styles.selectedText}>
                     Selected Days: {selectedDays.join(", ") || "None"}
                 </Text>
-                <TouchableOpacity style={styles.continueButton}>
+                <TouchableOpacity style={styles.continueButton} onPress={() => router.push('/portion')}>
                     <Text style={styles.continueButtonText}>Continue</Text>
                 </TouchableOpacity>
             </View>
