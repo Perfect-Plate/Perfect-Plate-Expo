@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import OptionButton from './OptionButton'
 import NavBar from './NavBar2';
+import { useRouter } from 'expo-router';
 import {
     View,
     Text,
@@ -13,6 +14,7 @@ type Option = 'Keto' | 'Paleo' | 'Vegetarian' | 'Vegan' | 'Pescatarian' | 'No pr
 
 const DietaryPreferences: React.FC = () => {
     const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
+    const router = useRouter();
 
     const options: Option[] = [
         'Keto',
@@ -48,7 +50,7 @@ const DietaryPreferences: React.FC = () => {
                     icon={selectedOptions.includes(option) ? require('@/assets/images/Yes.png') : undefined}
                 />
             ))}
-            <TouchableOpacity style={styles.continueButton}>
+            <TouchableOpacity style={styles.continueButton} onPress={() => router.push('/calendar')}>
                 <Text style={styles.continueButtonText}>Continue</Text>
             </TouchableOpacity>
         </ScrollView>
