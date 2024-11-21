@@ -27,7 +27,7 @@ export default function SplitOptionScreen() {
           {/* Get Started Button */}
           <TouchableOpacity
             style={styles.optionButton}
-            // onPress={() => router.push("/recipes")}
+            onPress={() => router.push("/calendar")}
           >
             <Text style={styles.optionButtonText}>
               Get started with recipes

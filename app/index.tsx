@@ -74,7 +74,7 @@ export default function HomeScreen() {
           {/* Get Started Button */}
           <TouchableOpacity
             style={styles.getStartedButton}
-            onPress={() => router.push("/allergy")}
+            onPress={() => router.push("/nutrition")}
           >
             <Text style={styles.getStartedButtonText}>Get started</Text>
           </TouchableOpacity>

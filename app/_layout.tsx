@@ -37,9 +37,17 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="nutrition" options={{ headerShown: false }} />
           <Stack.Screen name="dietary" options={{ headerShown: false }} />
+          <Stack.Screen name="allergy" options={{ headerShown: false }} />
+          <Stack.Screen name="splitOption" options={{ headerShown: false }} />
+
           <Stack.Screen name="calendar" options={{ headerShown: false }} />
+
           <Stack.Screen name="portion" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
+
+
+          <Stack.Screen name="signIn" options={{ headerShown: false }} />
+          <Stack.Screen name="signUp" options={{ headerShown: false }} />          
+          <Stack.Screen name="+not-found" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
   );
