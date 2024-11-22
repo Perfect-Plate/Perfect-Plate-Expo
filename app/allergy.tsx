@@ -131,7 +131,7 @@ export default function AllergyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#EDE9E8",
   },
   header: {
     height: 110,

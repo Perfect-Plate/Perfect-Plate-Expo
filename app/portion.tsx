@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-
+import { useRouter } from "expo-router";
 
 const Label: React.FC<{ text: string }> = ({ text }) => (
     <Text style={styles.label}>{text}</Text>
@@ -35,14 +35,15 @@ const MealPlanningPortions: React.FC = () => {
     const [breakfast, setBreakfast] = useState(1);
     const [lunch, setLunch] = useState(1);
     const [dinner, setDinner] = useState(1);
+    const router = useRouter();
 
     return (
         <View style={styles.container}>
-            {/* Header */}
+            {/* Header Section */}
             <View style={styles.header}>
-            <View style={styles.navBar}>
-                    <Text style={styles.navButtonBack}>{"<"} </Text>
-                </View>
+                <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+                    <Text style={styles.backArrow}>←</Text>
+                </TouchableOpacity>
                 <Text style={styles.headerText}>Meal Planning - Portions</Text>
                 <View style={styles.headerSpacer} />
             </View>
@@ -101,19 +102,33 @@ const MealPlanningPortions: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+    // container: {
+    //     flex: 1,
+    //     backgroundColor: "#EDE9E8",
+    //     justifyContent: "space-between",
+    // },
     container: {
         flex: 1,
         backgroundColor: "#EDE9E8",
-        justifyContent: "space-between",
     },
     header: {
+        height: 110,
+        backgroundColor: "#FFF",
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#EDE9E8",
-        padding: 16,
-        // borderBottomWidth: 1,
-        // borderBottomColor: "#CCCCCC",
-        marginTop: 60,
+        justifyContent: "center",
+        paddingHorizontal: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: "#DDD",
+    },
+    backButton: {
+        position: "absolute",
+        left: 16,
+    },
+    backArrow: {
+        fontSize: 24,
+        color: "#1B1918",
+        marginTop: 50,
     },
     navBar: {
         flexDirection: 'row', // Align items horizontally
@@ -139,12 +154,13 @@ const styles = StyleSheet.create({
         borderColor: "#1B1918",
     },
     headerText: {
-        flex: 1,
-        textAlign: "center",
-        fontSize: 18,
+        fontSize: 20,
         fontFamily: "Poppins",
         fontWeight: "400",
+        textAlign: "center",
         color: "#1B1918",
+        marginTop: 50,
+        marginLeft: 35
     },
     headerSpacer: {
         width: 30,
@@ -231,7 +247,7 @@ const styles = StyleSheet.create({
     },
     continueButton: {
         width: "100%",
-        height: 48,
+        height: 50,
         backgroundColor: "#F4A691",
         borderRadius: 40,
         justifyContent: "center",

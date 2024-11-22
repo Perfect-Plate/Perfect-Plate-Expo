@@ -29,19 +29,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#FFF', //color for button background
         paddingVertical: 18,
-        paddingHorizontal: 25,
+        paddingHorizontal: 20,
         borderRadius: 12,
         borderWidth: 1,
         borderColor: '#ddd',
-        marginBottom: 10,
+        marginBottom: 13,
+        marginLeft: 20,
+        marginRight: 20,
     },
     selected: {
         borderColor: '#B9D774', // Highlight color when selected
     },
     text: {
         flex: 1,
-        fontSize: 20,
-        color: '#333',
+        fontSize: 18,
+        color: 'black',
         textAlign: 'left',
         fontWeight: 500,
         fontStyle: 'normal',
@@ -51,7 +53,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         position: 'absolute',
-        right: 20, // Adjust according to your layout needs
+        right: 20,
     },
 });
 

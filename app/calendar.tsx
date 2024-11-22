@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 import {
     View,
     Text,
@@ -7,15 +7,13 @@ import {
     StyleSheet,
 } from "react-native";
 
-
 const MealPlanningCalendar: React.FC = () => {
-    // State to track the current month and year
-    const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth()); // 0-based
-    const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
-    const [selectedDays, setSelectedDays] = useState<number[]>([]); // Track selected days
     const router = useRouter();
 
-    // Helper to generate days for the current month
+    const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth()); // 0-based
+    const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
+    const [selectedDays, setSelectedDays] = useState<number[]>([]);
+
     const getDaysInMonth = (month: number, year: number) => {
         const firstDay = new Date(year, month, 1).getDay(); // Day of the week (0-6) for the first day
         const daysInMonth = new Date(year, month + 1, 0).getDate(); // Number of days in the month
@@ -36,7 +34,7 @@ const MealPlanningCalendar: React.FC = () => {
     };
 
     const handleMonthChange = (direction: "prev" | "next") => {
-        setSelectedDays([]); // Clear selected days when switching months
+        setSelectedDays([]);
         if (direction === "prev") {
             if (currentMonth === 0) {
                 setCurrentMonth(11);
@@ -57,8 +55,8 @@ const MealPlanningCalendar: React.FC = () => {
     const toggleDay = (day: number) => {
         setSelectedDays((prev) =>
             prev.includes(day)
-                ? prev.filter((d) => d !== day) // Deselect if already selected
-                : [...prev, day] // Select if not already selected
+                ? prev.filter((d) => d !== day)
+                : [...prev, day]
         );
     };
 
@@ -82,7 +80,7 @@ const MealPlanningCalendar: React.FC = () => {
         );
     };
 
-    const days = getDaysInMonth(currentMonth, currentYear); // Generate the calendar days for the current month
+    const days = getDaysInMonth(currentMonth, currentYear);
     const monthNames = [
         "January",
         "February",
@@ -101,13 +99,14 @@ const MealPlanningCalendar: React.FC = () => {
     return (
         <View style={styles.container}>
             {/* Header Section */}
-            <View style={styles.headerSection}>
-                {/* Navigation and Title */}
-                <View style={styles.navBar}>
-                    <Text style={styles.navButtonBack}>{"<"} </Text>
-                    <Text style={styles.headerTitle}>Meal Planning - Calendar</Text>
+            <View style={styles.header}>
+                <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+                    <Text style={styles.backArrow}>←</Text>
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Meal Planning - Calendar</Text>
+            </View>
 
-                </View>
+            <View style={styles.content}>
                 <Text style={styles.mainHeading}>Which days would you like to plan meals for?</Text>
                 <Text style={styles.notation}>Choose specific days, or select a time range</Text>
                 <Text style={styles.notation}>(up to 2 weeks)</Text>
@@ -115,7 +114,6 @@ const MealPlanningCalendar: React.FC = () => {
 
             {/* Calendar Section */}
             <View style={styles.calendarSection}>
-                {/* Month Navigation */}
                 <View style={styles.calendarHeader}>
                     <TouchableOpacity
                         onPress={() => handleMonthChange("prev")}
@@ -134,7 +132,6 @@ const MealPlanningCalendar: React.FC = () => {
                     </TouchableOpacity>
                 </View>
 
-                {/* Week Days */}
                 <View style={styles.weekDays}>
                     {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((day) => (
                         <Text style={styles.weekDay} key={day}>
@@ -143,15 +140,12 @@ const MealPlanningCalendar: React.FC = () => {
                     ))}
                 </View>
 
-                {/* Calendar Body */}
                 <View style={styles.calendarBody}>
                     {days.map((week, weekIndex) => (
                         <View key={`week-${weekIndex}`} style={styles.calendarRow}>
                             {week.map((day, dayIndex) =>
                                 day !== null ? (
-                                    <View key={`day-${weekIndex}-${day}`} style={styles.day}>
-                                        {renderDay(day)}
-                                    </View>
+                                    renderDay(day)
                                 ) : (
                                     <View key={`empty-${weekIndex}-${dayIndex}`} style={styles.dayEmpty} />
                                 )
@@ -161,12 +155,14 @@ const MealPlanningCalendar: React.FC = () => {
                 </View>
             </View>
 
-            {/* Footer Section */}
             <View style={styles.footerSection}>
                 <Text style={styles.selectedText}>
                     Selected Days: {selectedDays.join(", ") || "None"}
                 </Text>
-                <TouchableOpacity style={styles.continueButton} onPress={() => router.push('/portion')}>
+                <TouchableOpacity
+                    style={styles.continueButton}
+                    onPress={() => router.push("/portion")}
+                >
                     <Text style={styles.continueButtonText}>Continue</Text>
                 </TouchableOpacity>
             </View>
@@ -179,34 +175,48 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#EDE9E8",
     },
-    headerSection: {
-        padding: 16,
-        //backgroundColor: "#FFF",
-        marginTop: 70,
+    header: {
+        height: 110,
+        backgroundColor: "#FFF",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: "#DDD",
     },
-    navBar: {
-        flexDirection: 'row', // Align items horizontally
-        alignItems: 'center', // Vertically center items
-        justifyContent: 'flex-start', // Align content to the left
+    backButton: {
+        position: "absolute",
+        left: 16,
+    },
+    backArrow: {
+        fontSize: 24,
+        color: "#1B1918",
+        marginTop: 50,
     },
     headerTitle: {
-        fontSize: 18,
-        fontWeight: "500",
-        marginBottom: 8,
-        marginLeft: 70
+        fontSize: 20,
+        fontFamily: "Poppins",
+        fontWeight: "400",
+        textAlign: "center",
+        color: "#1B1918",
+        marginTop: 50,
+    },
+    content: {
+        paddingHorizontal: 16,
+        paddingVertical: 10,
     },
     mainHeading: {
-        fontSize: 30,
-        fontWeight: "400",
+        fontSize: 24,
+        fontWeight: "500",
+        color: "#1B1918",
         textAlign: "left",
-        color: "black",
+        marginBottom: 8,
     },
     notation: {
         fontSize: 16,
         fontWeight: "400",
-        textAlign: "left",
-        color: "#333",
-        lineHeight: 24,
+        color: "#737170",
     },
     calendarSection: {
         flex: 1,
@@ -231,12 +241,6 @@ const styles = StyleSheet.create({
     navButtonText: {
         fontSize: 30,
         fontWeight: "500",
-    },
-    navButtonBack: {
-        fontSize: 30,
-        fontWeight: "500",
-        height: 50,
-        width: 30
     },
     weekDays: {
         flexDirection: "row",
@@ -294,7 +298,8 @@ const styles = StyleSheet.create({
     continueButton: {
         backgroundColor: "#F4A691",
         padding: 12,
-        borderRadius: 8,
+        borderRadius: 40,
+        height: 50,
         alignItems: "center",
         marginBottom: 25,
     },
