@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingTop: 32,
-    paddingHorizontal: 16,
+    paddingHorizontal: 28,
   },
   column: {
     flexDirection: "column",

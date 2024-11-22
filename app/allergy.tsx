@@ -7,21 +7,23 @@ import {
   FlatList,
   StyleSheet,
   ScrollView,
+  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 
 export default function AllergyScreen() {
   const router = useRouter();
+
   const allergies = [
-    { id: "1", title: "Eggs", icon: "🥚" },
-    { id: "2", title: "Dairy", icon: "🥛" },
-    { id: "3", title: "Wheat", icon: "🌾" },
-    { id: "4", title: "Apple", icon: "🍎" },
-    { id: "5", title: "Fish", icon: "🐟" },
-    { id: "6", title: "Carrot", icon: "🥕" },
-    { id: "7", title: "Soy", icon: "🌱" },
-    { id: "8", title: "Lemon", icon: "🍋" },
-    { id: "9", title: "Shellfish", icon: "🦐" },
+    { id: "1", title: "Dairy", icon: require("@/assets/images/dairy.png") },
+    { id: "2", title: "Eggs", icon: require("@/assets/images/eggs.png") },
+    { id: "3", title: "Tree Nuts", icon: require("@/assets/images/tree-nuts.png") },
+    { id: "4", title: "Peanuts", icon: require("@/assets/images/peanut.png") },
+    { id: "5", title: "Shellfish", icon: require("@/assets/images/shellfish.png") },
+    { id: "6", title: "Wheat", icon: require("@/assets/images/wheat.png") },
+    { id: "7", title: "Soy", icon: require("@/assets/images/soy.png") },
+    { id: "8", title: "Fish", icon: require("@/assets/images/fish.png") },
+    { id: "9", title: "Sesame", icon: require("@/assets/images/sesame.png") },
   ];
 
   const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
@@ -46,7 +48,7 @@ export default function AllergyScreen() {
     setSelectedAllergies(selectedAllergies.filter((allergyId) => allergyId !== id));
   };
 
-  const renderAllergyItem = ({ item }: { item: { id: string; title: string; icon: string } }) => (
+  const renderAllergyItem = ({ item }: { item: { id: string; title: string; icon: any } }) => (
     <TouchableOpacity
       style={[
         styles.allergyItem,
@@ -62,7 +64,7 @@ export default function AllergyScreen() {
         </View>
       )}
 
-      <Text style={styles.allergyIcon}>{item.icon}</Text>
+      <Image source={item.icon} style={styles.allergyIcon} />
       <Text style={styles.allergyText}>{item.title}</Text>
     </TouchableOpacity>
   );
@@ -166,12 +168,13 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontFamily: "Poppins",
     fontWeight: "500",
     color: "#1B1918",
     textAlign: "center",
-    marginBottom: 16,
+    marginTop: 35,
+    marginBottom: 25,
   },
   allergyList: {
     paddingBottom: 1,
@@ -197,8 +200,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#E6F4E6",
   },
   allergyIcon: {
-    fontSize: 24,
+    width: 30,
+    height: 30,
     marginBottom: 5,
+    resizeMode: "contain",
   },
   allergyText: {
     fontSize: 16,

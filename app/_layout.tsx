@@ -39,12 +39,12 @@ export default function RootLayout() {
           <Stack.Screen name="dietary" options={{ headerShown: false }} />
           <Stack.Screen name="allergy" options={{ headerShown: false }} />
           <Stack.Screen name="splitOption" options={{ headerShown: false }} />
-
+          <Stack.Screen name="cuisine" options={{ headerShown: false }} />
           <Stack.Screen name="calendar" options={{ headerShown: false }} />
-
+          <Stack.Screen name="meals" options={{ headerShown: false }} />
           <Stack.Screen name="portion" options={{ headerShown: false }} />
-
-
+          <Stack.Screen name="addPreferences" options={{ headerShown: false }} />
+          <Stack.Screen name="overview" options={{ headerShown: false }} />
           <Stack.Screen name="signIn" options={{ headerShown: false }} />
           <Stack.Screen name="signUp" options={{ headerShown: false }} />          
           <Stack.Screen name="+not-found" options={{ headerShown: false }} />

@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ImageBackground,
   StyleSheet,
+  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 
@@ -81,9 +82,14 @@ export default function SignUpScreen() {
               style={styles.passwordToggle}
               onPress={() => setPasswordVisible(!passwordVisible)}
             >
-              <Text style={styles.passwordToggleText}>
-                {passwordVisible ? "👁️" : "🙈"}
-              </Text>
+              <Image
+                source={
+                  passwordVisible
+                    ? require("@/assets/images/eye-slash.png")
+                    : require("@/assets/images/eye.png")
+                }
+                style={styles.passwordToggleIcon}
+              />
             </TouchableOpacity>
           </View>
           <Text style={styles.passwordHint}>
@@ -130,7 +136,6 @@ const styles = StyleSheet.create({
   backButton: {
     position: "absolute",
     top: 70,
-    left: .1,
     zIndex: 10,
   },
   backArrow: {
@@ -191,7 +196,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontFamily: "Poppins",
     fontSize: 14,
-    color: "#8F8D8C",
+    color: "#000",
     backgroundColor: "#FFF",
   },
   passwordContainer: {
@@ -213,9 +218,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  passwordToggleText: {
-    fontSize: 18,
-    color: "#737170",
+  passwordToggleIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
   },
   passwordHint: {
     fontSize: 14,

@@ -27,7 +27,7 @@ export default function SplitOptionScreen() {
           {/* Get Started Button */}
           <TouchableOpacity
             style={styles.optionButton}
-            onPress={() => router.push("/calendar")}
+            onPress={() => router.push("/signUp")}
           >
             <Text style={styles.optionButtonText}>
               Get started with recipes
@@ -37,7 +37,7 @@ export default function SplitOptionScreen() {
           {/* Meal Planning Button */}
           <TouchableOpacity
             style={styles.optionButton}
-            // onPress={() => router.push("/meal-planning")}
+            onPress={() => router.push("/cuisine")}
           >
             <Text style={styles.optionButtonText}>
               Continue to meal planning

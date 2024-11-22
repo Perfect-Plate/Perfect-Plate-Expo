@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import OptionButton from './OptionButton'
-import NavBar from './NavBar2';
 import { useRouter } from 'expo-router';
 import {
     View,
