@@ -1,9 +1,24 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import React, {useEffect, useState} from "react";
+import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
+
 import { useRouter } from "expo-router";
+import {getMultipleStoredData} from "@/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen() {
   const router = useRouter();
+
+  // Helper function to randomize opacity
+  const getRandomOpacity = () => {
+    const opacities = [0.7, 0.6, 0.5, 0.4, 0.3];
+    return opacities[Math.floor(Math.random() * opacities.length)];
+  };
+  // useEffect(() => {
+  //   const clearData = async () => {
+  //     await AsyncStorage.clear();
+  //   }
+  //   clearData().then(r => {});
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -28,7 +43,10 @@ export default function HomeScreen() {
           {/* Get Started Button */}
           <TouchableOpacity
             style={styles.getStartedButton}
-            onPress={() => router.push("/nutrition")}
+            onPress={() => {
+              router.push({
+                pathname: "/nutrition",
+            })}}
           >
             <Text style={styles.getStartedButtonText}>Get started</Text>
           </TouchableOpacity>

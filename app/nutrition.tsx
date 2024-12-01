@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import OptionButton from "./OptionButton";
+import {storePreferences, getPreferenceFormData} from "@/api";
 
 type Option = 'Low Carb' | 'High Protein' | 'Low Fat' | 'Low Sodium' | 'Low Calorie' | 'No preference';
 
 const NutritionalPreferences: React.FC = () => {
     const router = useRouter();
-    const [selectedOption, setSelectedOption] = useState<Option | null>(null); // Single selection state
+    const [selectedOptions, setSelectedOptions] = useState<Option[]>([]); // Initialize with an empty array
+    const [queriedOptions, setQueriedOptions] = useState<Option[]>([]); // Initialize with an empty array
 
     const options: Option[] = [
         "Low Carb",
@@ -18,8 +20,41 @@ const NutritionalPreferences: React.FC = () => {
         "No preference",
     ];
 
+    useEffect(() => {
+        const fetchData = async () => {
+            // Check if the user has already localStorage data for nutrition
+            const data = await getPreferenceFormData("nutrition") as unknown as [] | null;
+            if (data) { // Ensure data is an array
+                setSelectedOptions(data as Option[]);
+                setQueriedOptions(data as Option[]);
+            }
+        };
+
+        fetchData().catch((err) => {}); // Add error handling
+    }, []);
+
     const handleSelectOption = (option: Option) => {
-        setSelectedOption(option === selectedOption ? null : option); // Toggle selection
+        setSelectedOptions((prev) => {
+            if (!prev) return [option]; // Handle case where prev is undefined
+            if (prev.includes(option)) {
+                return prev.filter((item) => item !== option);
+            } else {
+                return [...prev, option];
+            }
+        });
+    };
+
+    const handleContinue = async () => {
+        if (selectedOptions.length > 0 && selectedOptions !== queriedOptions) {
+            try {
+                await storePreferences("nutrition", selectedOptions);
+                router.push("/dietary");
+            } catch (err) {
+                console.error("Error storing preferences:", err);
+            }
+        }else {
+            router.push("/dietary");
+        }
     };
 
     return (
@@ -34,8 +69,8 @@ const NutritionalPreferences: React.FC = () => {
             </View>
 
             {/* Question Section */}
-            <Text style={styles.questionText}>Do you have </Text>
-            <Text style={styles.questionText2}>any nutritional preferences?</Text>
+            <Text style={styles.questionText}>Do you have any</Text>
+            <Text style={styles.questionText2}> nutritional preferences?</Text>
 
             {/* Options Section */}
             {options.map((option) => (
@@ -49,8 +84,18 @@ const NutritionalPreferences: React.FC = () => {
             ))}
 
             {/* Continue Button */}
-            <TouchableOpacity style={styles.continueButton} onPress={() => router.push("/dietary")}>
-                <Text style={styles.continueButtonText}>Continue</Text>
+            <TouchableOpacity
+                style={[
+                    styles.continueButton,
+                    selectedOptions.length === 0 && styles.inactiveContinueButton
+                ]}
+                onPress={handleContinue}
+                disabled={selectedOptions.length === 0}
+            >
+                <Text style={[
+                    styles.continueButtonText,
+                    selectedOptions.length === 0 && styles.inactiveContinueButtonText
+                ]}>Continue</Text>
             </TouchableOpacity>
         </View>
     );
@@ -61,6 +106,30 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#EDE9E8",
     },
+    continueButton: {
+        width: "90%",
+        height: 50,
+        backgroundColor: "#F4A691",
+        borderRadius: 40,
+        justifyContent: "center",
+        alignItems: "center",
+        position: "absolute",
+        bottom: 60,
+        alignSelf: "center",
+    },
+    inactiveContinueButton: {
+        backgroundColor: "#D3D3D3",
+    },
+    continueButtonText: {
+        color: "#1B1918",
+        fontSize: 18,
+        fontFamily: "Poppins",
+        fontWeight: "500",
+    },
+    inactiveContinueButtonText: {
+        color: "#808080",
+    },
+
     header: {
         height: 110,
         backgroundColor: "#FFF",
@@ -98,7 +167,7 @@ const styles = StyleSheet.create({
     questionText: {
         fontSize: 28,
         color: "black",
-        marginTop: 50,
+        marginTop: 40,
         textAlign: "left",
         marginLeft:20,
         fontWeight: '500',
@@ -107,26 +176,9 @@ const styles = StyleSheet.create({
         fontSize: 28,
         color: "black",
         textAlign: "left",
-        marginBottom: 40,
+        marginBottom: 30,
         marginLeft:20,
         fontWeight: '500',
-    },
-    continueButton: {
-        width: "90%",
-        height: 50,
-        backgroundColor: "#F4A691",
-        borderRadius: 40,
-        justifyContent: "center",
-        alignItems: "center",
-        position: "absolute",
-        bottom: 60,
-        alignSelf: "center",
-    },
-    continueButtonText: {
-        color: "#1B1918",
-        fontSize: 18,
-        fontFamily: "Poppins",
-        fontWeight: "500",
     },
 });
 

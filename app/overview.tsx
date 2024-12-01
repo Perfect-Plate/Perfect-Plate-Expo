@@ -1,8 +1,72 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import React, {useEffect, useState} from "react";
+import {View, Text, TouchableOpacity, StyleSheet, Image, ScrollView} from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import {getMultipleStoredData, getPreferenceFormData} from "@/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OverviewScreen() {
+  const [preferenceFormData, setPreferenceFormData] = useState<{
+  cuisine?: { [key: string]: string };
+  dietary?: string[];
+  mealDescription?: string;
+  mealPlanCalendar?: string[];
+  meals?: string[];
+  nutrition?: string[];
+  portions?: number[];
+}>({
+  cuisine: {},
+  dietary: [],
+  mealDescription: "",
+  mealPlanCalendar: [],
+  meals: [],
+  nutrition: [],
+  portions: [],
+});
+
+  const [signed_in, setSignedIn] = useState<{
+    status: string;
+    email: string;
+  }>();
+
+
+  useEffect(() => {
+  const fetchData = async () => {
+    // Check if the user is signed in
+    const signIn = await getPreferenceFormData("signed_in") as unknown as { status: string; email: string } | null;
+    setSignedIn(signIn || { status: "false", email: "" });
+
+    try {
+      const formDataArray = await getMultipleStoredData([
+        "nutrition",
+        "meals",
+        "dietary",
+        'allergy',
+        "cuisine",
+        "mealPlanCalendar",
+        "mealDescription",
+        "portions",
+      ]);
+
+      // Transform the array into a single object
+      const parsedData = formDataArray?.reduce((acc: any, item: any) => {
+        const [key, value] = Object.entries(item)[0];
+        acc[key] = JSON.parse(value as string); // Safely parse JSON
+        return acc;
+      }, {});
+
+
+      setPreferenceFormData(parsedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  fetchData();
+}, []);
+
+
+
+
   const router = useRouter();
   const {
     preferences = "",
@@ -15,110 +79,179 @@ export default function OverviewScreen() {
   } = useLocalSearchParams();
 
   const handleGeneratePlan = () => {
-    console.log("Meal plan generated with details:", {
-      daysPlanned,
-      adults,
-      kids,
-      breakfast,
-      lunch,
-      dinner,
-      preferences,
+    router.push({
+      pathname: "/mealGenerateWaiting",
+      params: { "data": JSON.stringify(preferenceFormData) },
     });
-    router.push("/signUp");
+  };
+
+  // Helper function to parse cuisine preferences
+  const formatCuisinePreferences = () => {
+    const cuisineMap: {[key: string]: string} = {
+      "1": "American",
+      "2": "Mexican",
+      "3": "Chinese",
+      "4": "Italian",
+      "5": "Japanese",
+      "6": "Thai",
+      "7": "Indian",
+      "8": "Mediterranean"
+    };
+    if (preferenceFormData["cuisine"]) {
+      return Object.entries(preferenceFormData.cuisine)
+        .map(([id, preference]) => `${cuisineMap[id]} (${preference})`)
+        .join(", ");
+    }
+    return "No cuisine preferences selected";
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Text style={styles.backArrow}>←</Text>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+            <Text style={styles.backArrow}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Meal Planning - Overview</Text>
+        </View>
+
+        {/* Scrollable Content */}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={styles.title}>Here's your meal plan summary:</Text>
+
+          {/* Days Planned Section */}
+          <View style={styles.summarySection}>
+            <View>
+              <Text style={styles.sectionHeader}>Meal Plan Dates:</Text>
+              {preferenceFormData.mealPlanCalendar?.map((date, index) => (
+                <Text key={index} style={styles.sectionText}>{date}</Text>
+              ))}
+            </View>
+            <TouchableOpacity onPress={() => router.push("/calendar")}>
+              <Image
+                  source={require("@/assets/images/edit.png")}
+                  style={styles.editIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Meals Section */}
+          <View style={styles.summarySection}>
+            <View>
+              <Text style={styles.sectionHeader}>Meal Types:</Text>
+              {preferenceFormData.meals?.map((meal, index) => (
+                <Text key={index} style={styles.sectionText}>{meal}</Text>
+              ))}
+            </View>
+            <TouchableOpacity onPress={() => router.push("/meals")}>
+              <Image
+                  source={require("@/assets/images/edit.png")}
+                  style={styles.editIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Dietary Preferences Section */}
+          <View style={styles.summarySection}>
+            <View>
+              <Text style={styles.sectionHeader}>Dietary Preferences:</Text>
+              {preferenceFormData.dietary?.map((diet, index) => (
+                <Text key={index} style={styles.sectionText}>{diet}</Text>
+              ))}
+            </View>
+            <TouchableOpacity onPress={() => router.push("/dietary")}>
+              <Image
+                  source={require("@/assets/images/edit.png")}
+                  style={styles.editIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Nutrition Preferences Section */}
+          <View style={styles.summarySection}>
+            <View>
+              <Text style={styles.sectionHeader}>Nutrition Preferences:</Text>
+              {preferenceFormData.nutrition?.map((nutrition, index) => (
+                <Text key={index} style={styles.sectionText}>{nutrition}</Text>
+              ))}
+            </View>
+            <TouchableOpacity onPress={() => router.push("/nutrition")}>
+              <Image
+                  source={require("@/assets/images/edit.png")}
+                  style={styles.editIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Cuisine Preferences Section */}
+          <View style={styles.summarySection}>
+            <View>
+              <Text style={styles.sectionHeader}>Cuisine Preferences:</Text>
+              <Text style={styles.sectionText}>{formatCuisinePreferences()}</Text>
+            </View>
+            <TouchableOpacity onPress={() => router.push("/cuisine")}>
+              <Image
+                  source={require("@/assets/images/edit.png")}
+                  style={styles.editIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Meal Description Section */}
+          <View style={styles.summarySection}>
+            <View>
+              <Text style={styles.sectionHeader}>Meal Description:</Text>
+              <Text style={styles.sectionText}>
+                {preferenceFormData.mealDescription || "No description provided"}
+              </Text>
+            </View>
+             <TouchableOpacity onPress={() => router.push("/addPreferences")}>
+              <Image
+                  source={require("@/assets/images/edit.png")}
+                  style={styles.editIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Extra space at the bottom to ensure the generate button doesn't cover content */}
+          <View style={styles.bottomSpacer} />
+        </ScrollView>
+
+        {/* Footer */}
+        <TouchableOpacity
+            style={styles.generateButton}
+            onPress={
+              signed_in != null && signed_in["status"] === "true" ? handleGeneratePlan : () => router.push("/signUp")
+            }
+        >
+          <Text style={styles.generateButtonText}>
+            {signed_in ? "Generate Meal Plan" : "Sign Up to Continue"}
+          </Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Meal Planning - Overview</Text>
       </View>
-
-      {/* Content */}
-      <View style={styles.content}>
-        <Text style={styles.title}>Here’s your meal plan summary:</Text>
-
-        {/* Days Planned Section */}
-        <View style={styles.summarySection}>
-          <View>
-            <Text style={styles.sectionHeader}>Days planned:</Text>
-            <Text style={styles.sectionText}>{daysPlanned} days</Text>
-          </View>
-          <TouchableOpacity onPress={() => router.push("/calendar")}>
-            <Image
-              source={require("@/assets/images/edit.png")}
-              style={styles.editIcon}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* Portions Section */}
-        <View style={styles.summarySection}>
-          <View>
-            <Text style={styles.sectionHeader}>Portions:</Text>
-            <Text style={styles.sectionText}>Adults: {adults}</Text>
-            <Text style={styles.sectionText}>Kids: {kids}</Text>
-          </View>
-          <TouchableOpacity onPress={() => router.push("/portion")}>
-            <Image
-              source={require("@/assets/images/edit.png")}
-              style={styles.editIcon}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* Dishes per Meal Section */}
-        <View style={styles.summarySection}>
-          <View>
-            <Text style={styles.sectionHeader}>Dishes per meal:</Text>
-            <Text style={styles.sectionText}>Breakfast: {breakfast}</Text>
-            <Text style={styles.sectionText}>Lunch: {lunch}</Text>
-            <Text style={styles.sectionText}>Dinner: {dinner}</Text>
-          </View>
-          <TouchableOpacity onPress={() => router.push("/portion")}>
-            <Image
-              source={require("@/assets/images/edit.png")}
-              style={styles.editIcon}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* Additional Details Section */}
-        <View style={styles.summarySection}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.sectionHeader}>Additional details:</Text>
-            <Text style={styles.sectionText}>
-              {preferences || "No additional preferences provided."}
-            </Text>
-          </View>
-          <TouchableOpacity onPress={() => router.push("/addPreferences")}>
-            <Image
-              source={require("@/assets/images/edit.png")}
-              style={styles.editIcon}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Footer */}
-      <TouchableOpacity
-        style={styles.generateButton}
-        onPress={handleGeneratePlan}
-      >
-        <Text style={styles.generateButtonText}>Generate my meal plan</Text>
-      </TouchableOpacity>
-    </View>
   );
 }
+
+// Styles remain the same as in the original code
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#EDE9E8",
-  },
+    },
+    scrollContent: {
+    marginTop:20,
+      marginRight: 16,
+        marginLeft: 16,
+        flexGrow: 1,
+      paddingBottom: 120, // Ensures content isn't hidden behind the generate button
+    },
+    bottomSpacer: {
+      height: 80, // Additional space at the bottom
+    },
   header: {
     height: 110,
     backgroundColor: "#FFF",
@@ -151,12 +284,13 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 24,
+    fontSize: 30,
     fontFamily: "Poppins",
     fontWeight: "500",
     color: "#1B1918",
-    marginBottom: 16,
-    textAlign: "center",
+    marginBottom: 30,
+    marginTop: 10,
+    textAlign: "left",
   },
   summarySection: {
     flexDirection: "row",
@@ -191,8 +325,8 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     justifyContent: "center",
     alignItems: "center",
-    position: "absolute",
-    bottom: 60,
+    position: "relative",
+    bottom: 30,
     alignSelf: "center",
   },
   generateButtonText: {
