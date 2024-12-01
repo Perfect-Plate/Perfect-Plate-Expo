@@ -19,7 +19,7 @@ export default function SignUpScreen() {
     <View style={styles.container}>
       {/* Header with Backdrop */}
       <ImageBackground
-        source={require("@/assets/images/signUpHeader.jpg")}
+        source={require("@/assets/images/signUpHeader.png")}
         style={styles.header}
         imageStyle={styles.headerImage}
       >
@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#DDD",
   },
   headerImage: {
-    opacity: 0.3,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },

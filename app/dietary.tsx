@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import OptionButton from './OptionButton'
+import OptionButton from './OptionButton';
 import { useRouter } from 'expo-router';
 import {
     View,
@@ -12,7 +12,7 @@ import {
 type Option = 'Keto' | 'Paleo' | 'Vegetarian' | 'Vegan' | 'Pescatarian' | 'No preference';
 
 const DietaryPreferences: React.FC = () => {
-    const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
+    const [selectedOption, setSelectedOption] = useState<Option | null>(null); // Single selection state
     const router = useRouter();
 
     const options: Option[] = [
@@ -25,15 +25,7 @@ const DietaryPreferences: React.FC = () => {
     ];
 
     const handleSelectOption = (option: Option) => {
-        setSelectedOptions((prev) => {
-            if (prev.includes(option)) {
-                // If already selected, remove it
-                return prev.filter((item) => item !== option);
-            } else {
-                // If not selected, add it
-                return [...prev, option];
-            }
-        });
+        setSelectedOption(option === selectedOption ? null : option); // Toggle selection
     };
 
     return (
@@ -56,9 +48,9 @@ const DietaryPreferences: React.FC = () => {
                 <OptionButton
                     key={option}
                     text={option}
-                    isSelected={selectedOptions.includes(option)}
+                    isSelected={selectedOption === option}
                     onPress={() => handleSelectOption(option)}
-                    icon={selectedOptions.includes(option) ? require('@/assets/images/yes.png') : undefined}
+                    icon={selectedOption === option ? require('@/assets/images/yes.png') : undefined}
                 />
             ))}
 
@@ -69,6 +61,7 @@ const DietaryPreferences: React.FC = () => {
         </View>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,

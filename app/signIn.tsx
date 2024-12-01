@@ -19,7 +19,7 @@ export default function SignInScreen() {
     <View style={styles.container}>
       {/* Header with Backdrop */}
       <ImageBackground
-        source={require("@/assets/images/signInHeader.jpeg")}
+        source={require("@/assets/images/signInHeader.png")}
         style={styles.header}
         imageStyle={styles.headerImage}
       >
@@ -107,7 +107,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#DDD",
   },
   headerImage: {
-    opacity: 0.3,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },

@@ -7,7 +7,7 @@ type Option = 'Low Carb' | 'High Protein' | 'Low Fat' | 'Low Sodium' | 'Low Calo
 
 const NutritionalPreferences: React.FC = () => {
     const router = useRouter();
-    const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
+    const [selectedOption, setSelectedOption] = useState<Option | null>(null); // Single selection state
 
     const options: Option[] = [
         "Low Carb",
@@ -19,13 +19,7 @@ const NutritionalPreferences: React.FC = () => {
     ];
 
     const handleSelectOption = (option: Option) => {
-        setSelectedOptions((prev) => {
-            if (prev.includes(option)) {
-                return prev.filter((item) => item !== option);
-            } else {
-                return [...prev, option];
-            }
-        });
+        setSelectedOption(option === selectedOption ? null : option); // Toggle selection
     };
 
     return (
@@ -48,9 +42,9 @@ const NutritionalPreferences: React.FC = () => {
                 <OptionButton
                     key={option}
                     text={option}
-                    isSelected={selectedOptions.includes(option)}
+                    isSelected={selectedOption === option}
                     onPress={() => handleSelectOption(option)}
-                    icon={selectedOptions.includes(option) ? require('@/assets/images/yes.png') : undefined}
+                    icon={selectedOption === option ? require('@/assets/images/yes.png') : undefined}
                 />
             ))}
 
@@ -61,6 +55,7 @@ const NutritionalPreferences: React.FC = () => {
         </View>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,

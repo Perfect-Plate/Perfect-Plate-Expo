@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#1B1918",
     marginBottom: 16,
-    textAlign: "center",
+    textAlign: "left",
   },
   cuisineList: {
     flexGrow: 1,
