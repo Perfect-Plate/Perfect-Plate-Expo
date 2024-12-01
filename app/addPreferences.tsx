@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   View,
   Text,
@@ -8,11 +8,37 @@ import {
   ScrollView,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import {getPreferenceFormData, storePreferences} from "@/api";
+import Stringifier from "postcss/lib/stringifier";
 
 export default function AddPreferencesScreen() {
   const router = useRouter();
-  const { daysPlanned, adults, kids, breakfast, lunch, dinner } = useLocalSearchParams(); // Retrieve previously passed data
+  // const { daysPlanned, adults, kids, breakfast, lunch, dinner } = useLocalSearchParams(); // Retrieve previously passed data
   const [preferences, setPreferences] = useState("");
+  const [queriedOptions, setQueriedOptions] = useState("");
+
+    useEffect(() => {
+        const fetchData = async () => {
+            // Check if the user has already localStorage data for nutrition
+            const data = await getPreferenceFormData("mealDescription") as unknown as string | null;
+            if (data) { // Ensure data is an array
+                setPreferences(data as string);
+                setQueriedOptions(data as string);
+            }
+        };
+
+        fetchData().catch((err) => {}); // Add error handling
+    }, []);
+     const handleContinue = () => {
+        if (preferences.length > 0 && preferences !== queriedOptions) {
+            storePreferences("mealDescription", preferences).then(r => {
+                router.push("/overview")
+            });
+        }else {
+            router.push("/overview");
+        }
+    };
+
 
   return (
     <View style={styles.container}>
@@ -38,7 +64,7 @@ export default function AddPreferencesScreen() {
             placeholder="Write additional preferences..."
             placeholderTextColor="#8F8D8C"
             multiline
-            value={preferences}
+            value={preferences || ""}
             onChangeText={setPreferences}
           />
         </View>
@@ -47,27 +73,19 @@ export default function AddPreferencesScreen() {
           leftover ingredients.
         </Text>
 
-        {/* Continue Button */}
-        <TouchableOpacity
-          style={styles.continueButton}
-          onPress={() => {
-            // Pass all collected data to the `overview.tsx` screen
-            router.push({
-              pathname: "/overview",
-              params: {
-                daysPlanned, // Data from calendar.tsx
-                adults, // Data from portions.tsx
-                kids,
-                breakfast,
-                lunch,
-                dinner,
-                preferences, // User-entered preferences
-              },
-            });
-          }}
-        >
-          <Text style={styles.continueButtonText}>Continue</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+                style={[
+                    styles.continueButton,
+                    preferences.length === 0 && styles.inactiveContinueButton
+                ]}
+                onPress={handleContinue}
+                disabled={preferences.length === 0}
+            >
+                <Text style={[
+                    styles.continueButtonText,
+                    preferences.length === 0 && styles.inactiveContinueButtonText
+                ]}>Continue</Text>
+            </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -78,6 +96,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#EDE9E8",
   },
+  continueButton: {
+        width: "90%",
+        height: 50,
+        backgroundColor: "#F4A691",
+        borderRadius: 40,
+        justifyContent: "center",
+        alignItems: "center",
+        position: "absolute",
+        bottom: 60,
+        alignSelf: "center",
+    },
+    inactiveContinueButton: {
+        backgroundColor: "#D3D3D3",
+    },
+    continueButtonText: {
+        color: "#1B1918",
+        fontSize: 18,
+        fontFamily: "Poppins",
+        fontWeight: "500",
+    },
+    inactiveContinueButtonText: {
+        color: "#808080",
+    },
   header: {
     height: 110,
     backgroundColor: "#FFF",
@@ -142,20 +183,5 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: "#1B1918",
     lineHeight: 24,
-  },
-  continueButton: {
-    height: 48,
-    backgroundColor: "#F4A691",
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 16,
-    marginBottom: 20,
-  },
-  continueButtonText: {
-    fontSize: 18,
-    fontFamily: "Poppins",
-    fontWeight: "500",
-    color: "#1B1918",
   },
 });

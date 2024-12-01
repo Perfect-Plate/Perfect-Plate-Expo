@@ -10,10 +10,23 @@ import {
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
+import SignIn, {SignInRequest} from "@/api/signIn";
+import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import storeData from "@/api/preference_form";
 
 export default function SignInScreen() {
   const router = useRouter();
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const showToast = async  () => {
+    Toast.show({
+      type: 'success',
+      text1: 'Sign Up Successful 🎉',
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -48,6 +61,8 @@ export default function SignInScreen() {
             style={styles.input}
             placeholder="Email"
             keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
 
@@ -59,6 +74,8 @@ export default function SignInScreen() {
               style={[styles.input, styles.passwordInput]}
               placeholder="Password"
               secureTextEntry={!passwordVisible}
+                value={password}
+                onChangeText={setPassword}
             />
             <TouchableOpacity
               style={styles.passwordToggle}
@@ -77,14 +94,32 @@ export default function SignInScreen() {
         </View>
 
         {/* Sign In Button */}
-        <TouchableOpacity style={styles.signInButton}>
+        <TouchableOpacity style={styles.signInButton}
+                          onPress={async () => {
+                            const signInRequest: SignInRequest = {
+                              email: email,
+                              password: password
+                            }
+                            const response = await SignIn(signInRequest);
+                            if (response?.status === 200) {
+                              await showToast();
+                              await storeData("signed_in", {id: email, status: "true"});
+                              router.push("/overview")
+                            } else {
+                              console.error("Error signing in:", response);                         }
+                          }}
+        >
           <Text style={styles.signInButtonText}>Sign in</Text>
         </TouchableOpacity>
 
         {/* Sign Up Link */}
         <View style={styles.signUpContainer}>
           <Text style={styles.signUpText}>Don’t have an account? </Text>
-          <TouchableOpacity onPress={() => router.push("/signUp")}>
+          <TouchableOpacity onPress={async () => {
+            router.push("/signUp")
+          }
+          }
+            >
             <Text style={styles.signUpLink}>Sign up</Text>
           </TouchableOpacity>
         </View>

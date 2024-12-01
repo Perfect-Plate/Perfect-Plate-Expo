@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import {storePreferences} from "@/api";
 
 const Label: React.FC<{ text: string }> = ({ text }) => (
   <Text style={styles.label}>{text}</Text>
@@ -30,7 +31,7 @@ const Counter: React.FC<{
 
 const MealPlanningPortions: React.FC = () => {
   // State for counters
-  const [adults, setAdults] = useState(0);
+  const [adults, setAdults] = useState(1);
   const [kids, setKids] = useState(0);
   const [breakfast, setBreakfast] = useState(1);
   const [lunch, setLunch] = useState(1);
@@ -97,7 +98,8 @@ const MealPlanningPortions: React.FC = () => {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.continueButton}
-          onPress={() =>
+          onPress={() => {
+            storePreferences("portions", [adults, kids, breakfast, lunch, dinner]).then(() => {
             router.push({
               pathname: "/addPreferences",
               params: {
@@ -109,8 +111,9 @@ const MealPlanningPortions: React.FC = () => {
                 dinner, // Pass all counter values
               },
             })
+          });
           }
-        >
+          }>
           <Text style={styles.continueText}>Continue</Text>
         </TouchableOpacity>
       </View>
@@ -123,6 +126,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#EDE9E8",
   },
+
   header: {
     height: 110,
     backgroundColor: "#FFF",

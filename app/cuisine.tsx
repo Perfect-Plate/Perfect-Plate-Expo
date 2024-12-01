@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
+import {getPreferenceFormData, storePreferences} from "@/api";
 
 export default function CuisineScreen() {
   const router = useRouter();
@@ -24,18 +25,60 @@ export default function CuisineScreen() {
   ];
 
   const [preferences, setPreferences] = useState<{ [key: string]: string }>({});
+  const [queriedOptions, setQueriedOptions] = useState<{ [key: string]: string }>({});
 
-  const handlePreference = (id: string, preference: string) => {
-    setPreferences((prev) => ({
-      ...prev,
-      [id]: prev[id] === preference ? "" : preference,
-    }));
+
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const data = await getPreferenceFormData("cuisine");
+
+      // Check if the data needs parsing
+      const parsedData = typeof data === "string" ? JSON.parse(data) : data;
+
+      setPreferences(parsedData || {});
+      setQueriedOptions(parsedData || {});
+    } catch (err) {
+      setPreferences({});
+      setQueriedOptions({});
+    }
   };
 
-  const renderCuisineItem = ({ item }: { item: { id: string; title: string } }) => (
+  fetchData();
+}, []);
+
+
+
+
+  const handlePreference = (id: string, preference: string) => {
+  setPreferences((prev) => ({
+    ...prev, // Keep other preferences
+    [id]: prev[id] === preference ? "" : preference, // Toggle preference
+  }));
+};
+
+
+  const handleContinue = () => {
+    // Check if any preferences have been selected
+    const hasPreferences = Object.keys(preferences).some(
+      key => preferences[key] === "like" || preferences[key] === "dislike"
+    );
+
+    if (hasPreferences && preferences !== queriedOptions) {
+      storePreferences("cuisine", preferences).then(r => {
+        router.push("/calendar")
+      });
+    }else {
+      router.push("/calendar");
+    }
+  };
+
+  const renderCuisineItem = ({ item }: { item: { id: string; title: string } }) => {
+  return (
     <View style={styles.cuisineItem}>
       <Text style={styles.cuisineText}>{item.title}</Text>
       <View style={styles.preferenceButtons}>
+        {/* "Like" Button */}
         <TouchableOpacity
           style={[
             styles.preferenceButton,
@@ -51,6 +94,7 @@ export default function CuisineScreen() {
             ]}
           />
         </TouchableOpacity>
+        {/* "Dislike" Button */}
         <TouchableOpacity
           style={[
             styles.preferenceButton,
@@ -69,6 +113,8 @@ export default function CuisineScreen() {
       </View>
     </View>
   );
+};
+
 
   return (
     <View style={styles.container}>
@@ -94,21 +140,48 @@ export default function CuisineScreen() {
 
         {/* Continue Button */}
         <TouchableOpacity
-          style={styles.continueButton}
-          onPress={() => router.push("/calendar")}
+            style={[
+                styles.continueButton,
+                !Object.keys(preferences).some(
+                    key => preferences[key] === "like" || preferences[key] === "dislike"
+                ) && styles.inactiveContinueButton
+            ]}
+            onPress={handleContinue}
+            disabled={!Object.keys(preferences).some(
+                key => preferences[key] === "like" || preferences[key] === "dislike"
+            )}
         >
-          <Text style={styles.continueButtonText}>Continue</Text>
+            <Text style={[
+                styles.continueButtonText,
+                !Object.keys(preferences).some(
+                    key => preferences[key] === "like" || preferences[key] === "dislike"
+                ) && styles.inactiveContinueButtonText
+            ]}>Continue</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
+// ... styles remain the same as in the original code
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#EDE9E8",
   },
+  inactiveContinueButton: {
+        backgroundColor: "#D3D3D3",
+    },
+    continueButtonText: {
+        color: "#1B1918",
+        fontSize: 18,
+        fontFamily: "Poppins",
+        fontWeight: "500",
+    },
+    inactiveContinueButtonText: {
+        color: "#808080",
+    },
   header: {
     height: 110,
     backgroundColor: "#FFF",
@@ -209,11 +282,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 16,
     marginBottom: 60,
-  },
-  continueButtonText: {
-    fontSize: 18,
-    fontFamily: "Poppins",
-    fontWeight: "500",
-    color: "#1B1918",
   },
 });

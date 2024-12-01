@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
+import {getPreferenceFormData, storePreferences} from "@/api";
+import {Option} from "commander";
 
 export default function AllergyScreen() {
   const router = useRouter();
@@ -26,37 +28,69 @@ export default function AllergyScreen() {
     { id: "9", title: "Sesame", icon: require("@/assets/images/sesame.png") },
   ];
 
-  const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
+
+  const [selectedItem, setSelectedItem] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
+  const [allergyData, setAllergyData] = useState<string[]>([]);
+      const [queriedOptions, setQueriedOptions] = useState<string[]>([]);
+
+
+  useEffect(() => {
+  const fetchData = async () => {
+    const data = await getPreferenceFormData("allergy") as unknown as string[];
+    if (data) {
+      // check title from allergies data with id and set the title as the selected item
+      setSelectedItem(
+    allergies
+        .filter((items) => data.includes(items.title)) // Ensure `items.title` is properly typed
+        .map((allergy) => allergy.id)
+      );
+      setAllergyData(data as string[]);
+      setQueriedOptions(data as string[]);
+    }
+  };
+
+  fetchData().then(r => {});
+}, []);
 
   const toggleSelection = (id: string) => {
-    if (selectedAllergies.includes(id)) {
-      setSelectedAllergies(selectedAllergies.filter((allergyId) => allergyId !== id));
+    if (selectedItem.includes(id)) {
+      setSelectedItem(selectedItem.filter((allergyId) => allergyId !== id));
+      setAllergyData(allergyData.filter((allergy) => allergy !== allergies.find((allergy) => allergy.id === id)?.title));
     } else {
-      setSelectedAllergies([...selectedAllergies, id]);
+      setSelectedItem([...selectedItem, id]);
+      if(allergies.find((allergy) => allergy.id === id)?.title){
+        setAllergyData([...allergyData, allergies.find((allergy) => allergy.id === id)?.title] as string[]);
+      }
     }
   };
 
   const addCustomAllergy = () => {
-    if (inputValue.trim() && !selectedAllergies.includes(inputValue)) {
-      setSelectedAllergies([...selectedAllergies, inputValue]);
+    if (inputValue.trim() && !selectedItem.includes(inputValue)) {
+      setSelectedItem([...selectedItem, inputValue]);
+      setAllergyData([...allergyData, inputValue]);
       setInputValue("");
     }
   };
 
   const removeSelectedAllergy = (id: string) => {
-    setSelectedAllergies(selectedAllergies.filter((allergyId) => allergyId !== id));
+    setSelectedItem(selectedItem.filter((allergyId) => allergyId !== id));
+    // check from allergies data with id and remove its related title from the list
+    const allergyTitle = allergies.find((allergy) => allergy.id === id)?.title;
+    if (allergyTitle) {
+      setAllergyData(allergyData.filter((allergy) => allergy !== allergyTitle));
+    }
   };
 
   const renderAllergyItem = ({ item }: { item: { id: string; title: string; icon: any } }) => (
     <TouchableOpacity
       style={[
         styles.allergyItem,
-        selectedAllergies.includes(item.id) && styles.selectedAllergyItem,
+        selectedItem.includes(item.id) && styles.selectedAllergyItem,
       ]}
       onPress={() => toggleSelection(item.id)}
     >
-      {selectedAllergies.includes(item.id) && (
+      {selectedItem.includes(item.id) && (
         <View style={styles.checkmark}>
           <View style={styles.checkmarkCircle}>
             <Text style={styles.checkmarkText}>✔</Text>
@@ -85,7 +119,7 @@ export default function AllergyScreen() {
 
         <FlatList
           data={allergies}
-          renderItem={renderAllergyItem}
+          renderItem={(item) => renderAllergyItem(item)}
           keyExtractor={(item) => item.id}
           numColumns={3}
           columnWrapperStyle={styles.columnWrapper}
@@ -106,8 +140,8 @@ export default function AllergyScreen() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView horizontal style={styles.selectedAllergiesContainer}>
-          {selectedAllergies
+        <ScrollView horizontal style={styles.selectedItemContainer}>
+          {selectedItem
             .filter((id) => !allergies.some((allergy) => allergy.id === id))
             .map((id) => (
               <View key={id} style={styles.selectedBubble}>
@@ -121,8 +155,16 @@ export default function AllergyScreen() {
 
         <TouchableOpacity
           style={styles.continueButton}
-          onPress={() => router.push("/splitOption")}
-        >
+          onPress={() => {
+            if(allergyData !== queriedOptions) {
+              storePreferences("allergy", allergyData).then(() => {
+                    router.push("/splitOption")
+                  }
+              );
+            }else {
+              router.push("/splitOption");
+            }
+        }}>
           <Text style={styles.continueButtonText}>Continue</Text>
         </TouchableOpacity>
       </View>
@@ -132,9 +174,32 @@ export default function AllergyScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#EDE9E8",
-  },
+        flex: 1,
+        backgroundColor: "#EDE9E8",
+    },
+    continueButton: {
+        width: "90%",
+        height: 50,
+        backgroundColor: "#F4A691",
+        borderRadius: 40,
+        justifyContent: "center",
+        alignItems: "center",
+        position: "absolute",
+        bottom: 60,
+        alignSelf: "center",
+    },
+    inactiveContinueButton: {
+        backgroundColor: "#D3D3D3",
+    },
+    continueButtonText: {
+        color: "#1B1918",
+        fontSize: 18,
+        fontFamily: "Poppins",
+        fontWeight: "500",
+    },
+    inactiveContinueButtonText: {
+        color: "#808080",
+    },
   header: {
     height: 110,
     backgroundColor: "#FFF",
@@ -270,7 +335,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     fontWeight: "500",
   },
-  selectedAllergiesContainer: {
+  selectedItemContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     marginBottom: 100,
@@ -293,22 +358,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#1B1918",
     marginLeft: 5,
-  },
-  continueButton: {
-    width: "100%",
-    height: 50,
-    backgroundColor: "#F4A691",
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    bottom: 60,
-    alignSelf: "center",
-  },
-  continueButtonText: {
-    color: "#1B1918",
-    fontSize: 18,
-    fontFamily: "Poppins",
-    fontWeight: "500",
   },
 });

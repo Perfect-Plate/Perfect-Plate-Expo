@@ -1,52 +1,86 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OptionButton from "./OptionButton";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { getPreferenceFormData, storePreferences } from "@/api";
 
 const Meals: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const router = useRouter();
-  const searchParams = useLocalSearchParams(); // Use useLocalSearchParams to get query params
-  const { daysPlanned } = searchParams; // Extract daysPlanned
-
+  const [queriedOptions, setQueriedOptions] = useState<string[]>([]);
   const options: string[] = ["Breakfast", "Lunch", "Dinner"];
 
-  const handleSelectOption = (option: string) => {
-    setSelectedOptions((prev) => {
-      if (prev.includes(option)) {
-        return prev.filter((item) => item !== option);
+ useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const data = await getPreferenceFormData("meals");
+
+      // convert string to array
+      const parsedData = typeof data === "string" ? JSON.parse(data) : data;
+
+      // Add explicit type checking and default to empty array
+      if (parsedData === null || parsedData === undefined) {
+        console.log("No meal preferences found, initializing empty array");
+        setSelectedOptions([]);
+        setQueriedOptions([]);
       } else {
-        return [...prev, option];
-      }
-    });
+        setSelectedOptions(parsedData);
+        setQueriedOptions(parsedData);
+        }
+    } catch (err) {
+      console.error("Error fetching preferences:", err);
+      setSelectedOptions([]);
+      setQueriedOptions([]);
+    }
+  };
+
+  fetchData();
+}, []);
+
+
+  const handleSelectOption = (option: string) => {
+  setSelectedOptions((prev) => {
+    // Ensure prev is an array, fallback to empty array if not
+    const prevArray = Array.isArray(prev) ? prev : [];
+
+    return prevArray.includes(option)
+      ? prevArray.filter((item) => item !== option)
+      : [...prevArray, option];
+  });
+};
+
+
+  const handleContinue = () => {
+    if (selectedOptions.length > 0 && selectedOptions !== queriedOptions) {
+      storePreferences("meals", selectedOptions).then(() => {
+        router.push("/portion");
+      });
+    } else {
+      router.push("/portion");
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Header Section */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Text style={styles.backArrow}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Meal Planning - Meals</Text>
       </View>
 
-      {/* Question Section */}
       <Text style={styles.questionText}>
         Select the meals you would like to cover:
       </Text>
 
-      {/* Options Section */}
       {options.map((option) => (
         <OptionButton
           key={option}
           text={option}
-          isSelected={selectedOptions.includes(option)}
+          isSelected={selectedOptions.filter((item) => item === option).length > 0}
           onPress={() => handleSelectOption(option)}
           icon={
             selectedOptions.includes(option)
@@ -56,29 +90,45 @@ const Meals: React.FC = () => {
         />
       ))}
 
-      {/* Continue Button */}
       <TouchableOpacity
-        style={styles.continueButton}
-        onPress={() =>
-          router.push({
-            pathname: "/portion",
-            params: {
-              daysPlanned, // Pass the daysPlanned value to the next page
-            },
-          })
-        }
+        style={[
+          styles.continueButton,
+          selectedOptions.length === 0 && styles.inactiveContinueButton,
+        ]}
+        onPress={handleContinue}
+        disabled={selectedOptions.length === 0}
       >
-        <Text style={styles.continueButtonText}>Continue</Text>
+        <Text
+          style={[
+            styles.continueButtonText,
+            selectedOptions.length === 0 && styles.inactiveContinueButtonText,
+          ]}
+        >
+          Continue
+        </Text>
       </TouchableOpacity>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#EDE9E8",
   },
+  inactiveContinueButton: {
+        backgroundColor: "#D3D3D3",
+    },
+    continueButtonText: {
+        color: "#1B1918",
+        fontSize: 18,
+        fontFamily: "Poppins",
+        fontWeight: "500",
+    },
+    inactiveContinueButtonText: {
+        color: "#808080",
+    },
   header: {
     height: 110,
     backgroundColor: "#FFF",
@@ -125,12 +175,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 60,
     alignSelf: "center",
-  },
-  continueButtonText: {
-    color: "#1B1918",
-    fontSize: 18,
-    fontFamily: "Poppins",
-    fontWeight: "500",
   },
 });
 

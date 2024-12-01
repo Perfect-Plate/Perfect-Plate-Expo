@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
+import {storePreferences} from "@/api";
 
 const MealPlanningCalendar: React.FC = () => {
   const router = useRouter();
@@ -8,6 +9,7 @@ const MealPlanningCalendar: React.FC = () => {
   const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
+  const [selectedDates, setSelectedDates] = useState<string[]>([]);
 
   const getDaysInMonth = (month: number, year: number) => {
     const firstDay = new Date(year, month, 1).getDay();
@@ -51,7 +53,26 @@ const MealPlanningCalendar: React.FC = () => {
     setSelectedDays((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
+
+    // store date as a string in the format "YYYY-MM-DD"
+    const selectedDate = `${currentYear}-${currentMonth + 1}-${day}`;
+    setSelectedDates((prev) =>
+      prev.includes(selectedDate) ? prev.filter((d) => d !== selectedDate) : [...prev, selectedDate]
+    );
   };
+
+  const handleContinue = () => {
+        if (selectedDates.length > 0) {
+          storePreferences("mealPlanCalendar", selectedDates).then(r => {
+                  router.push({
+                    pathname: "/meals",
+                   params: {daysPlanned: selectedDays.length},
+                 })
+                });
+
+          }
+        }
+
 
   const renderDay = (day: number | null) => {
     if (!day) return <View style={styles.dayEmpty} />;
@@ -158,17 +179,21 @@ const MealPlanningCalendar: React.FC = () => {
         <Text style={styles.selectedText}>
           Selected Days: {selectedDays.join(", ") || "None"}
         </Text>
-        <TouchableOpacity
-          style={styles.continueButton}
-          onPress={() =>
-            router.push({
-              pathname: "/meals",
-              params: { daysPlanned: selectedDays.length },
-            })
-          }
-        >
-          <Text style={styles.continueButtonText}>Continue</Text>
-        </TouchableOpacity>
+
+        {/* Continue Button */}
+            <TouchableOpacity
+                style={[
+                    styles.continueButton,
+                    selectedDates.length === 0 && styles.inactiveContinueButton
+                ]}
+                onPress={handleContinue}
+                disabled={selectedDates.length === 0}
+            >
+                <Text style={[
+                    styles.continueButtonText,
+                    selectedDates.length === 0 && styles.inactiveContinueButtonText
+                ]}>Continue</Text>
+            </TouchableOpacity>
       </View>
     </View>
   );
@@ -179,6 +204,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#EDE9E8",
   },
+  inactiveContinueButton: {
+        backgroundColor: "#D3D3D3",
+    },
+    continueButtonText: {
+        color: "#1B1918",
+        fontSize: 18,
+        fontFamily: "Poppins",
+        fontWeight: "500",
+    },
+    inactiveContinueButtonText: {
+        color: "#808080",
+    },
   header: {
     height: 110,
     backgroundColor: "#FFF",
@@ -307,10 +344,6 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     marginBottom: 25,
-  },
-  continueButtonText: {
-    fontSize: 16,
-    fontWeight: "500",
   },
 });
 

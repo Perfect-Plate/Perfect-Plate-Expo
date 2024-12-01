@@ -10,10 +10,41 @@ import {
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
+import Toast from 'react-native-toast-message';
+import { signUp } from "@/api";
+import {SignUpRequest} from "@/api/signUp";
 
 export default function SignUpScreen() {
   const router = useRouter();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const showToast = async  () => {
+    Toast.show({
+      type: 'success',
+      text1: 'Sign Up Successful 🎉',
+    });
+  }
+
+  const handleSignUp = async () => {
+    try {
+      const data = { firstName, lastName, username, email, password };
+      const response = await signUp(data as SignUpRequest);
+
+      if (response?.status === 200) {
+        await showToast();
+        router.push("/signIn");
+      }else {
+        console.error("Error signing up:", response);
+      }
+  } catch (error) {
+        console.error("Error signing up:", error);
+    }
+    };
 
   return (
     <View style={styles.container}>
@@ -45,18 +76,33 @@ export default function SignUpScreen() {
         <View style={styles.inputRow}>
           <View style={[styles.inputGroup, styles.inputFirstName]}>
             <Text style={styles.label}>First name</Text>
-            <TextInput style={styles.input} placeholder="First name" />
+            <TextInput
+              style={styles.input}
+              placeholder="First name"
+              value={firstName}
+              onChangeText={setFirstName}
+            />
           </View>
           <View style={[styles.inputGroup, styles.inputLastName]}>
             <Text style={styles.label}>Last name</Text>
-            <TextInput style={styles.input} placeholder="Last name" />
+            <TextInput
+              style={styles.input}
+              placeholder="Last name"
+              value={lastName}
+              onChangeText={setLastName}
+            />
           </View>
         </View>
 
         {/* Username Field */}
         <View style={[styles.inputGroup, styles.usernameSection]}>
           <Text style={styles.label}>Username</Text>
-          <TextInput style={styles.input} placeholder="Username" />
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+          />
         </View>
 
         {/* Email Field */}
@@ -66,6 +112,8 @@ export default function SignUpScreen() {
             style={styles.input}
             placeholder="Email"
             keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
 
@@ -77,6 +125,8 @@ export default function SignUpScreen() {
               style={[styles.input, styles.passwordInput]}
               placeholder="Password"
               secureTextEntry={!passwordVisible}
+              value={password}
+              onChangeText={setPassword}
             />
             <TouchableOpacity
               style={styles.passwordToggle}
@@ -99,7 +149,7 @@ export default function SignUpScreen() {
         </View>
 
         {/* Sign Up Button */}
-        <TouchableOpacity style={styles.signUpButton}>
+        <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
           <Text style={styles.signUpButtonText}>Sign up</Text>
         </TouchableOpacity>
 
