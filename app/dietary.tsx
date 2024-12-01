@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import OptionButton from './OptionButton'
+
 import { useRouter } from 'expo-router';
 import {
     View,
@@ -15,6 +16,7 @@ type Option = 'Keto' | 'Paleo' | 'Vegetarian' | 'Vegan' | 'Pescatarian' | 'No pr
 const DietaryPreferences: React.FC = () => {
     const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
     const [queriedOptions, setQueriedOptions] = useState<Option[]>([]); // Initialize with an empty array
+
 
     const router = useRouter();
 
@@ -50,6 +52,7 @@ const DietaryPreferences: React.FC = () => {
                 return [...prev, option];
             }
         });
+
     };
 
      const handleContinue = () => {
@@ -87,6 +90,7 @@ const DietaryPreferences: React.FC = () => {
                     isSelected={selectedOptions.includes(option)}
                     onPress={async () => await handleSelectOption(option)}
                     icon={selectedOptions.includes(option) ? require('@/assets/images/yes.png') : undefined}
+
                 />
             ))}
 
@@ -107,6 +111,7 @@ const DietaryPreferences: React.FC = () => {
         </View>
     );
 };
+
 const styles = StyleSheet.create({
    container: {
         flex: 1,

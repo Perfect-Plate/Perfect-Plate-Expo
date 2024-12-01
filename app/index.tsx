@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
+
 import { useRouter } from "expo-router";
 import {getMultipleStoredData} from "@/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -21,55 +22,15 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Top Half with Images */}
+      {/* Top Section with Single Background Image */}
       <View style={styles.topSection}>
-        <ScrollView contentContainerStyle={styles.backdrop} horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.column}>
-            <Image
-              source={require("@/assets/images/food1.png")}
-              style={[styles.image, styles.imageLarge, { opacity: getRandomOpacity() }]}
-            />
-            <Image
-              source={require("@/assets/images/food2.png")}
-              style={[styles.image, styles.imageSmall, { opacity: getRandomOpacity() }]}
-            />
-            <Image
-              source={require("@/assets/images/food3.png")}
-              style={[styles.image, styles.imageSmall, { opacity: getRandomOpacity() }]}
-            />
-          </View>
-          <View style={styles.column}>
-            <Image
-              source={require("@/assets/images/food4.png")}
-              style={[styles.image, styles.imageMedium, { opacity: getRandomOpacity() }]}
-            />
-            <Image
-              source={require("@/assets/images/food5.png")}
-              style={[styles.image, styles.imageMedium, { opacity: getRandomOpacity() }]}
-            />
-            <Image
-              source={require("@/assets/images/food6.png")}
-              style={[styles.image, styles.imageMedium, styles.shadow, { opacity: getRandomOpacity() }]}
-            />
-          </View>
-          <View style={styles.column}>
-            <Image
-              source={require("@/assets/images/food7.png")}
-              style={[styles.image, styles.imageSmall, { opacity: getRandomOpacity() }]}
-            />
-            <Image
-              source={require("@/assets/images/food8.png")}
-              style={[styles.image, styles.imageLarge, { opacity: getRandomOpacity() }]}
-            />
-            <Image
-              source={require("@/assets/images/food9.png")}
-              style={[styles.image, styles.imageSmall, { opacity: getRandomOpacity() }]}
-            />
-          </View>
-        </ScrollView>
+        <Image
+          source={require("@/assets/images/welcome.png")}
+          style={styles.fullScreenImage}
+        />
       </View>
 
-      {/* Bottom Half */}
+      {/* Bottom Section */}
       <View style={styles.bottomSection}>
         {/* Title */}
         <Text style={styles.title}>PerfectPlates</Text>
@@ -110,45 +71,16 @@ const styles = StyleSheet.create({
   },
   topSection: {
     flex: 1,
-  },
-  backdrop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingTop: 32,
-    paddingHorizontal: 28,
-  },
-  column: {
-    flexDirection: "column",
+    justifyContent: "center",
     alignItems: "center",
-    gap: 8,
   },
-  image: {
-    borderRadius: 80,
-  },
-  imageLarge: {
-    height: 216,
-    width: 112,
-    borderWidth: 2,
-    borderColor: "#F4A691",
-  },
-  imageMedium: {
-    height: 144,
-    width: 112,
-    borderWidth: 2,
-    borderColor: "#B9D774",
-  },
-  imageSmall: {
-    height: 112,
-    width: 112,
-  },
-  shadow: {
-    shadowColor: "#B2A7A4",
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
+  fullScreenImage: {
+    flex: 1,
+    width: "100%",
+    resizeMode: "cover",
   },
   bottomSection: {
-    flex: .80,
+    flex: 0.8,
     backgroundColor: "#FFF",
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,

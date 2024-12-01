@@ -6,10 +6,22 @@ import {storePreferences} from "@/api";
 const MealPlanningCalendar: React.FC = () => {
   const router = useRouter();
 
-  const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
+  const today = new Date();
+  const [currentMonth, setCurrentMonth] = useState<number>(today.getMonth());
+  const [currentYear, setCurrentYear] = useState<number>(today.getFullYear());
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
+
+  // Calculate valid range
+  const startDate = today.getDate();
+  const endDate = startDate + 13; // 2 weeks from today (14 days total)
+
+  const isValidDate = (day: number, month: number, year: number) => {
+    const date = new Date(year, month, day);
+    const dayOfYear = Math.floor((date.getTime() - new Date(year, 0, 0).getTime()) / 86400000);
+    const todayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+    return dayOfYear >= todayOfYear && dayOfYear <= todayOfYear + 13;
+  };
 
   const getDaysInMonth = (month: number, year: number) => {
     const firstDay = new Date(year, month, 1).getDay();
@@ -77,17 +89,27 @@ const MealPlanningCalendar: React.FC = () => {
   const renderDay = (day: number | null) => {
     if (!day) return <View style={styles.dayEmpty} />;
     const isSelected = selectedDays.includes(day);
+    const isInRange = isValidDate(day, currentMonth, currentYear);
 
     return (
       <TouchableOpacity
         key={day}
         style={[
           styles.day,
-          isSelected ? styles.daySelected : styles.dayDefault,
+          isInRange ? (isSelected ? styles.daySelectedWhite : styles.dayInRange) : styles.dayOutOfRange,
         ]}
-        onPress={() => toggleDay(day)}
+        onPress={() => isInRange && toggleDay(day)}
+        disabled={!isInRange}
       >
-        <Text style={isSelected ? styles.dayTextSelected : styles.dayText}>
+        <Text
+          style={
+            isInRange
+              ? isSelected
+                ? styles.dayTextBlack // Selected days will have black text
+                : styles.dayText
+              : styles.dayTextOutOfRange
+          }
+        >
           {day}
         </Text>
       </TouchableOpacity>
@@ -311,19 +333,28 @@ const styles = StyleSheet.create({
     margin: 4,
     borderRadius: 20,
   },
-  dayDefault: {
+  dayInRange: {
+    backgroundColor: "#C5E47F",
+  },
+  dayOutOfRange: {
     backgroundColor: "#EDE9E8",
   },
-  daySelected: {
-    backgroundColor: "#C5E47F",
+  daySelectedWhite: {
+    backgroundColor: "#FFF",
+    borderColor: "#C5E47F",
+    borderWidth: 2,
   },
   dayText: {
     fontSize: 16,
     color: "#333",
   },
-  dayTextSelected: {
+  dayTextBlack: {
     fontSize: 16,
-    color: "#FFF",
+    color: "#000",
+  },
+  dayTextOutOfRange: {
+    fontSize: 16,
+    color: "#A0A0A0",
   },
   dayEmpty: {
     width: 40,

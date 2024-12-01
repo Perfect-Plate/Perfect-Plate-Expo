@@ -77,9 +77,9 @@ const NutritionalPreferences: React.FC = () => {
                 <OptionButton
                     key={option}
                     text={option}
-                    isSelected={selectedOptions.includes(option)}
+                    isSelected={selectedOption === option}
                     onPress={() => handleSelectOption(option)}
-                    icon={selectedOptions.includes(option) ? require('@/assets/images/yes.png') : undefined}
+                    icon={selectedOption === option ? require('@/assets/images/yes.png') : undefined}
                 />
             ))}
 
@@ -100,7 +100,6 @@ const NutritionalPreferences: React.FC = () => {
         </View>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {

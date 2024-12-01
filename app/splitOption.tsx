@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     fontWeight: "500",
     color: "#1B1918",
-    textAlign: "center",
+    textAlign: "left",
     marginBottom: 16,
   },
   description: {
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: "#737170",
     lineHeight: 24,
-    textAlign: "center",
+    textAlign: "left",
     marginBottom: 40,
   },
   buttonGroup: {

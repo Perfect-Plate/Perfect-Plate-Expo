@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     fontWeight: "500",
     color: "#1B1918",
-    textAlign: "center",
+    textAlign: "left",
     marginTop: 35,
     marginBottom: 25,
   },
