@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
 export default function SplitOptionScreen() {
@@ -9,7 +9,10 @@ export default function SplitOptionScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Text style={styles.backArrow}>←</Text>
         </TouchableOpacity>
       </View>
@@ -36,10 +39,12 @@ export default function SplitOptionScreen() {
 
           {/* Meal Planning Button */}
           <TouchableOpacity
-            style={styles.optionButton}
+            style={[styles.optionButton, styles.mealPlanningButton]}
             onPress={() => router.push("/cuisine")}
           >
-            <Text style={styles.optionButtonText}>
+            <Text
+              style={[styles.optionButtonText, styles.mealPlanningButtonText]}
+            >
               Continue to meal planning
             </Text>
           </TouchableOpacity>
@@ -75,10 +80,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "#1B1918",
     marginTop: 50,
-  },
-  image: {
-    width: 100,
-    height: 100,
   },
   content: {
     flex: 1,
@@ -117,11 +118,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  mealPlanningButton: {
+    backgroundColor: "#FFF",
+    borderWidth: 2,
+    borderColor: "#F4A691",
+  },
   optionButtonText: {
     color: "#1B1918",
     fontSize: 18,
     fontFamily: "Poppins",
     fontWeight: "500",
     lineHeight: 24,
+  },
+  mealPlanningButtonText: {
+    color: "#1B1918",
   },
 });

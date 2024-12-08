@@ -10,45 +10,43 @@ const Meals: React.FC = () => {
   const [queriedOptions, setQueriedOptions] = useState<string[]>([]);
   const options: string[] = ["Breakfast", "Lunch", "Dinner"];
 
- useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const data = await getPreferenceFormData("meals");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getPreferenceFormData("meals");
 
-      // convert string to array
-      const parsedData = typeof data === "string" ? JSON.parse(data) : data;
+        // convert string to array
+        const parsedData = typeof data === "string" ? JSON.parse(data) : data;
 
-      // Add explicit type checking and default to empty array
-      if (parsedData === null || parsedData === undefined) {
-        console.log("No meal preferences found, initializing empty array");
+        // Add explicit type checking and default to empty array
+        if (parsedData === null || parsedData === undefined) {
+          console.log("No meal preferences found, initializing empty array");
+          setSelectedOptions([]);
+          setQueriedOptions([]);
+        } else {
+          setSelectedOptions(parsedData);
+          setQueriedOptions(parsedData);
+        }
+      } catch (err) {
+        console.error("Error fetching preferences:", err);
         setSelectedOptions([]);
         setQueriedOptions([]);
-      } else {
-        setSelectedOptions(parsedData);
-        setQueriedOptions(parsedData);
-        }
-    } catch (err) {
-      console.error("Error fetching preferences:", err);
-      setSelectedOptions([]);
-      setQueriedOptions([]);
-    }
-  };
+      }
+    };
 
-  fetchData();
-}, []);
-
+    fetchData();
+  }, []);
 
   const handleSelectOption = (option: string) => {
-  setSelectedOptions((prev) => {
-    // Ensure prev is an array, fallback to empty array if not
-    const prevArray = Array.isArray(prev) ? prev : [];
+    setSelectedOptions((prev) => {
+      // Ensure prev is an array, fallback to empty array if not
+      const prevArray = Array.isArray(prev) ? prev : [];
 
-    return prevArray.includes(option)
-      ? prevArray.filter((item) => item !== option)
-      : [...prevArray, option];
-  });
-};
-
+      return prevArray.includes(option)
+        ? prevArray.filter((item) => item !== option)
+        : [...prevArray, option];
+    });
+  };
 
   const handleContinue = () => {
     if (selectedOptions.length > 0 && selectedOptions !== queriedOptions) {
@@ -80,7 +78,9 @@ const Meals: React.FC = () => {
         <OptionButton
           key={option}
           text={option}
-          isSelected={selectedOptions.filter((item) => item === option).length > 0}
+          isSelected={
+            selectedOptions.filter((item) => item === option).length > 0
+          }
           onPress={() => handleSelectOption(option)}
           icon={
             selectedOptions.includes(option)
@@ -111,24 +111,23 @@ const Meals: React.FC = () => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#EDE9E8",
   },
   inactiveContinueButton: {
-        backgroundColor: "#D3D3D3",
-    },
-    continueButtonText: {
-        color: "#1B1918",
-        fontSize: 18,
-        fontFamily: "Poppins",
-        fontWeight: "500",
-    },
-    inactiveContinueButtonText: {
-        color: "#808080",
-    },
+    backgroundColor: "#D3D3D3",
+  },
+  continueButtonText: {
+    color: "#1B1918",
+    fontSize: 18,
+    fontFamily: "Poppins",
+    fontWeight: "500",
+  },
+  inactiveContinueButtonText: {
+    color: "#808080",
+  },
   header: {
     height: 110,
     backgroundColor: "#FFF",
@@ -149,7 +148,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: "Poppins",
     fontWeight: "400",
     textAlign: "center",
@@ -159,11 +158,11 @@ const styles = StyleSheet.create({
   questionText: {
     fontSize: 28,
     color: "black",
-    marginTop: 50,
+    marginTop: 32,
     textAlign: "left",
     marginLeft: 20,
     fontWeight: "500",
-    marginBottom: 40,
+    marginBottom: 24,
   },
   continueButton: {
     width: "90%",
@@ -173,7 +172,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    bottom: 60,
+    bottom: 40,
     alignSelf: "center",
   },
 });

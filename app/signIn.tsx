@@ -10,7 +10,7 @@ import {
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
-import SignIn, {SignInRequest} from "@/api/signIn";
+import SignIn, { SignInRequest } from "@/api/signIn";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import storeData from "@/api/preference_form";
@@ -19,14 +19,14 @@ export default function SignInScreen() {
   const router = useRouter();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("");
 
-    const showToast = async  () => {
+  const showToast = async () => {
     Toast.show({
-      type: 'success',
-      text1: 'Sign Up Successful 🎉',
+      type: "success",
+      text1: "Sign Up Successful 🎉",
     });
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -36,7 +36,6 @@ export default function SignInScreen() {
         style={styles.header}
         imageStyle={styles.headerImage}
       >
-        {/* Back Arrow */}
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableOpacity
             style={styles.backButton}
@@ -45,8 +44,6 @@ export default function SignInScreen() {
             <Text style={styles.backArrow}>←</Text>
           </TouchableOpacity>
         </SafeAreaView>
-
-        {/* Header Title */}
         <Text style={styles.headerTitle}>
           Sign in to access your meal plans & recipes
         </Text>
@@ -54,60 +51,61 @@ export default function SignInScreen() {
 
       {/* Form Section */}
       <View style={styles.formContainer}>
-        {/* Email Field */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
-
-        {/* Password Field */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Password</Text>
-          <View style={styles.passwordContainer}>
+        <View style={styles.inputsContainer}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Email</Text>
             <TextInput
-              style={[styles.input, styles.passwordInput]}
-              placeholder="Password"
-              secureTextEntry={!passwordVisible}
+              style={styles.input}
+              placeholder="Email"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Password</Text>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={[styles.input, styles.passwordInput]}
+                placeholder="Password"
+                secureTextEntry={!passwordVisible}
                 value={password}
                 onChangeText={setPassword}
-            />
-            <TouchableOpacity
-              style={styles.passwordToggle}
-              onPress={() => setPasswordVisible(!passwordVisible)}
-            >
-              <Image
-                source={
-                  passwordVisible
-                    ? require("@/assets/images/eye-slash.png")
-                    : require("@/assets/images/eye.png")
-                }
-                style={styles.passwordToggleIcon}
               />
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.passwordToggle}
+                onPress={() => setPasswordVisible(!passwordVisible)}
+              >
+                <Image
+                  source={
+                    passwordVisible
+                      ? require("@/assets/images/eye-slash.png")
+                      : require("@/assets/images/eye.png")
+                  }
+                  style={styles.passwordToggleIcon}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
         {/* Sign In Button */}
-        <TouchableOpacity style={styles.signInButton}
-                          onPress={async () => {
-                            const signInRequest: SignInRequest = {
-                              email: email,
-                              password: password
-                            }
-                            const response = await SignIn(signInRequest);
-                            if (response?.status === 200) {
-                              await showToast();
-                              await storeData("signed_in", {id: email, status: "true"});
-                              router.push("/overview")
-                            } else {
-                              console.error("Error signing in:", response);                         }
-                          }}
+        <TouchableOpacity
+          style={styles.signInButton}
+          onPress={async () => {
+            const signInRequest: SignInRequest = {
+              email: email,
+              password: password,
+            };
+            const response = await SignIn(signInRequest);
+            if (response?.status === 200) {
+              await showToast();
+              await storeData("signed_in", { id: email, status: "true" });
+              router.push("/overview");
+            } else {
+              console.error("Error signing in:", response);
+            }
+          }}
         >
           <Text style={styles.signInButtonText}>Sign in</Text>
         </TouchableOpacity>
@@ -115,11 +113,7 @@ export default function SignInScreen() {
         {/* Sign Up Link */}
         <View style={styles.signUpContainer}>
           <Text style={styles.signUpText}>Don’t have an account? </Text>
-          <TouchableOpacity onPress={async () => {
-            router.push("/signUp")
-          }
-          }
-            >
+          <TouchableOpacity onPress={() => router.push("/signUp")}>
             <Text style={styles.signUpLink}>Sign up</Text>
           </TouchableOpacity>
         </View>
@@ -134,7 +128,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   header: {
-    height: 236,
+    height: 192,
     justifyContent: "center",
     alignItems: "flex-start",
     paddingHorizontal: 16,
@@ -148,7 +142,6 @@ const styles = StyleSheet.create({
   backButton: {
     position: "absolute",
     top: 70,
-    left: 0.1,
     zIndex: 10,
   },
   backArrow: {
@@ -163,12 +156,16 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     textAlign: "left",
     marginTop: 60,
+    marginBottom: 16,
   },
   formContainer: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 32,
-    paddingBottom: 16,
+    paddingTop: 24,
+    paddingBottom: 40,
+  },
+  inputsContainer: {
+    marginBottom: "auto",
   },
   inputGroup: {
     marginBottom: 16,
@@ -178,7 +175,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Poppins",
     fontWeight: "500",
-    marginBottom: 4,
+    marginBottom: 8,
   },
   input: {
     height: 48,
@@ -221,7 +218,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
+    marginBottom: 8,
   },
   signInButtonText: {
     color: "#1B1918",
@@ -233,7 +230,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 16,
   },
   signUpText: {
     fontSize: 16,

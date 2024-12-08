@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import {storePreferences} from "@/api";
+import { storePreferences } from "@/api";
 
 const Label: React.FC<{ text: string }> = ({ text }) => (
   <Text style={styles.label}>{text}</Text>
@@ -30,7 +30,6 @@ const Counter: React.FC<{
 );
 
 const MealPlanningPortions: React.FC = () => {
-  // State for counters
   const [adults, setAdults] = useState(1);
   const [kids, setKids] = useState(0);
   const [breakfast, setBreakfast] = useState(1);
@@ -38,13 +37,16 @@ const MealPlanningPortions: React.FC = () => {
   const [dinner, setDinner] = useState(1);
 
   const router = useRouter();
-  const { daysPlanned } = useLocalSearchParams(); // Retrieve `daysPlanned` from previous screen
+  const { daysPlanned } = useLocalSearchParams();
 
   return (
     <View style={styles.container}>
       {/* Header Section */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Text style={styles.backArrow}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerText}>Meal Planning - Portions</Text>
@@ -53,9 +55,11 @@ const MealPlanningPortions: React.FC = () => {
 
       {/* Body */}
       <View style={styles.body}>
-        {/* Section: How many people */}
+        {/* Section: People Planning */}
         <View style={styles.section}>
-          <Text style={styles.questionHeader}>How many people are you planning for?</Text>
+          <Text style={styles.questionHeader}>
+            How many people are you planning for?
+          </Text>
           <Counter
             label="Adults:"
             count={adults}
@@ -70,9 +74,11 @@ const MealPlanningPortions: React.FC = () => {
           />
         </View>
 
-        {/* Section: How many dishes */}
+        {/* Section: Dishes Planning */}
         <View style={styles.section}>
-          <Text style={styles.questionHeader}>How many dishes to include in each meal?</Text>
+          <Text style={styles.questionHeader}>
+            How many dishes to include in each meal?
+          </Text>
           <Counter
             label="Breakfast:"
             count={breakfast}
@@ -99,21 +105,27 @@ const MealPlanningPortions: React.FC = () => {
         <TouchableOpacity
           style={styles.continueButton}
           onPress={() => {
-            storePreferences("portions", [adults, kids, breakfast, lunch, dinner]).then(() => {
-            router.push({
-              pathname: "/addPreferences",
-              params: {
-                daysPlanned, // Pass `daysPlanned` from calendar.tsx
-                adults,
-                kids,
-                breakfast,
-                lunch,
-                dinner, // Pass all counter values
-              },
-            })
-          });
-          }
-          }>
+            storePreferences("portions", [
+              adults,
+              kids,
+              breakfast,
+              lunch,
+              dinner,
+            ]).then(() => {
+              router.push({
+                pathname: "/addPreferences",
+                params: {
+                  daysPlanned,
+                  adults,
+                  kids,
+                  breakfast,
+                  lunch,
+                  dinner,
+                },
+              });
+            });
+          }}
+        >
           <Text style={styles.continueText}>Continue</Text>
         </TouchableOpacity>
       </View>
@@ -126,7 +138,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#EDE9E8",
   },
-
   header: {
     height: 110,
     backgroundColor: "#FFF",
@@ -136,6 +147,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#DDD",
+    marginBottom: 32,
   },
   backButton: {
     position: "absolute",
@@ -147,7 +159,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: "Poppins",
     fontWeight: "400",
     textAlign: "center",
@@ -160,12 +172,10 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     padding: 16,
-    justifyContent: "center",
-    alignItems: "center",
   },
   section: {
     width: "100%",
-    marginBottom: 45,
+    marginBottom: 48,
   },
   questionHeader: {
     fontSize: 28,
@@ -173,8 +183,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     lineHeight: 36,
     textAlign: "left",
-    marginBottom: 20,
-    marginTop: 20,
+    marginBottom: 24,
   },
   label: {
     fontSize: 20,
@@ -186,7 +195,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginVertical: 10,
+    marginVertical: 12,
   },
   counterBox: {
     flexDirection: "row",
@@ -244,7 +253,9 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 60,
+    position: "absolute",
+    bottom: 40,
+    alignSelf: "center",
   },
   continueText: {
     fontSize: 18,

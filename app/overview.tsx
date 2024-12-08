@@ -86,8 +86,8 @@ export default function OverviewScreen() {
   };
 
   // Helper function to parse cuisine preferences
-  const formatCuisinePreferences = () => {
-    const cuisineMap: {[key: string]: string} = {
+const formatCuisinePreferences = () => {
+    const cuisineMap: { [key: string]: string } = {
       "1": "American",
       "2": "Mexican",
       "3": "Chinese",
@@ -95,15 +95,19 @@ export default function OverviewScreen() {
       "5": "Japanese",
       "6": "Thai",
       "7": "Indian",
-      "8": "Mediterranean"
+      "8": "Mediterranean",
     };
+  
     if (preferenceFormData["cuisine"]) {
       return Object.entries(preferenceFormData.cuisine)
+        .filter(([_, preference]) => preference === "like" || preference === "dislike") // Only include liked/disliked
         .map(([id, preference]) => `${cuisineMap[id]} (${preference})`)
         .join(", ");
     }
+  
     return "No cuisine preferences selected";
   };
+  
 
   return (
       <View style={styles.container}>
@@ -224,18 +228,16 @@ export default function OverviewScreen() {
         <TouchableOpacity
             style={styles.generateButton}
             onPress={
-              signed_in != null && signed_in["status"] === "true" ? handleGeneratePlan : () => router.push("/signUp")
+              signed_in != null && signed_in["status"] === "true" ? handleGeneratePlan : () => router.push("/home")
             }
         >
           <Text style={styles.generateButtonText}>
-            {signed_in ? "Generate Meal Plan" : "Sign Up to Continue"}
+            {signed_in ? "Generate meal plan" : "Sign Up to Continue"}
           </Text>
         </TouchableOpacity>
       </View>
   );
 }
-
-// Styles remain the same as in the original code
 
 const styles = StyleSheet.create({
   container: {
@@ -288,7 +290,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     fontWeight: "500",
     color: "#1B1918",
-    marginBottom: 30,
+    marginBottom: 24,
     marginTop: 10,
     textAlign: "left",
   },
@@ -306,6 +308,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     fontWeight: "500",
     color: "#B55D45",
+    marginBottom: 8,
   },
   sectionText: {
     fontSize: 18,
@@ -326,7 +329,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    bottom: 30,
+    bottom: 40,
     alignSelf: "center",
   },
   generateButtonText: {
