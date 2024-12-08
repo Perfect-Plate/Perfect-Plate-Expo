@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import {getPreferenceFormData, storePreferences} from "@/api";
+import { getPreferenceFormData, storePreferences } from "@/api";
 import Stringifier from "postcss/lib/stringifier";
 
 export default function AddPreferencesScreen() {
@@ -17,28 +17,30 @@ export default function AddPreferencesScreen() {
   const [preferences, setPreferences] = useState("");
   const [queriedOptions, setQueriedOptions] = useState("");
 
-    useEffect(() => {
-        const fetchData = async () => {
-            // Check if the user has already localStorage data for nutrition
-            const data = await getPreferenceFormData("mealDescription") as unknown as string | null;
-            if (data) { // Ensure data is an array
-                setPreferences(data as string);
-                setQueriedOptions(data as string);
-            }
-        };
-
-        fetchData().catch((err) => {}); // Add error handling
-    }, []);
-     const handleContinue = () => {
-        if (preferences.length > 0 && preferences !== queriedOptions) {
-            storePreferences("mealDescription", preferences).then(r => {
-                router.push("/overview")
-            });
-        }else {
-            router.push("/overview");
-        }
+  useEffect(() => {
+    const fetchData = async () => {
+      // Check if the user has already localStorage data for nutrition
+      const data = (await getPreferenceFormData(
+        "mealDescription"
+      )) as unknown as string | null;
+      if (data) {
+        // Ensure data is an array
+        setPreferences(data as string);
+        setQueriedOptions(data as string);
+      }
     };
 
+    fetchData().catch((err) => {}); // Add error handling
+  }, []);
+  const handleContinue = () => {
+    if (preferences.length > 0 && preferences !== queriedOptions) {
+      storePreferences("mealDescription", preferences).then((r) => {
+        router.push("/overview");
+      });
+    } else {
+      router.push("/overview");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -73,19 +75,23 @@ export default function AddPreferencesScreen() {
           leftover ingredients.
         </Text>
 
-            <TouchableOpacity
-                style={[
-                    styles.continueButton,
-                    preferences.length === 0 && styles.inactiveContinueButton
-                ]}
-                onPress={handleContinue}
-                disabled={preferences.length === 0}
-            >
-                <Text style={[
-                    styles.continueButtonText,
-                    preferences.length === 0 && styles.inactiveContinueButtonText
-                ]}>Continue</Text>
-            </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.continueButton,
+            preferences.length === 0 && styles.inactiveContinueButton,
+          ]}
+          onPress={handleContinue}
+          disabled={preferences.length === 0}
+        >
+          <Text
+            style={[
+              styles.continueButtonText,
+              preferences.length === 0 && styles.inactiveContinueButtonText,
+            ]}
+          >
+            Continue
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -97,28 +103,28 @@ const styles = StyleSheet.create({
     backgroundColor: "#EDE9E8",
   },
   continueButton: {
-        width: "90%",
-        height: 50,
-        backgroundColor: "#F4A691",
-        borderRadius: 40,
-        justifyContent: "center",
-        alignItems: "center",
-        position: "absolute",
-        bottom: 60,
-        alignSelf: "center",
-    },
-    inactiveContinueButton: {
-        backgroundColor: "#D3D3D3",
-    },
-    continueButtonText: {
-        color: "#1B1918",
-        fontSize: 18,
-        fontFamily: "Poppins",
-        fontWeight: "500",
-    },
-    inactiveContinueButtonText: {
-        color: "#808080",
-    },
+    width: "100%",
+    height: 50,
+    backgroundColor: "#F4A691",
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 40,
+    alignSelf: "center",
+  },
+  inactiveContinueButton: {
+    backgroundColor: "#D3D3D3",
+  },
+  continueButtonText: {
+    color: "#1B1918",
+    fontSize: 18,
+    fontFamily: "Poppins",
+    fontWeight: "500",
+  },
+  inactiveContinueButtonText: {
+    color: "#808080",
+  },
   header: {
     height: 110,
     backgroundColor: "#FFF",
@@ -139,7 +145,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: "Poppins",
     fontWeight: "400",
     textAlign: "center",
@@ -154,11 +160,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontFamily: "Poppins",
     fontWeight: "500",
     color: "#1B1918",
-    marginBottom: 16,
+    marginBottom: 24,
     textAlign: "left",
   },
   inputContainer: {

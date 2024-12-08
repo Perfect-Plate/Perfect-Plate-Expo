@@ -10,9 +10,9 @@ import {
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
 import { signUp } from "@/api";
-import {SignUpRequest} from "@/api/signUp";
+import { SignUpRequest } from "@/api/signUp";
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -23,12 +23,12 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-  const showToast = async  () => {
+  const showToast = async () => {
     Toast.show({
-      type: 'success',
-      text1: 'Sign Up Successful 🎉',
+      type: "success",
+      text1: "Sign Up Successful 🎉",
     });
-  }
+  };
 
   const handleSignUp = async () => {
     try {
@@ -38,13 +38,13 @@ export default function SignUpScreen() {
       if (response?.status === 200) {
         await showToast();
         router.push("/signIn");
-      }else {
+      } else {
         console.error("Error signing up:", response);
       }
-  } catch (error) {
-        console.error("Error signing up:", error);
+    } catch (error) {
+      console.error("Error signing up:", error);
     }
-    };
+  };
 
   return (
     <View style={styles.container}>
@@ -54,7 +54,6 @@ export default function SignUpScreen() {
         style={styles.header}
         imageStyle={styles.headerImage}
       >
-        {/* Back Arrow */}
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableOpacity
             style={styles.backButton}
@@ -63,17 +62,15 @@ export default function SignUpScreen() {
             <Text style={styles.backArrow}>←</Text>
           </TouchableOpacity>
         </SafeAreaView>
-
-        {/* Header Title */}
         <Text style={styles.headerTitle}>
-          Sign up to save your personalized meal plans & recipes
+          Sign up to save your meal plans & recipes
         </Text>
       </ImageBackground>
 
       {/* Form Section */}
       <View style={styles.formContainer}>
-        {/* First and Last Name Row */}
-        <View style={styles.inputRow}>
+        <View style={styles.firstLastNameContainer}>
+          {/* First Name */}
           <View style={[styles.inputGroup, styles.inputFirstName]}>
             <Text style={styles.label}>First name</Text>
             <TextInput
@@ -83,6 +80,7 @@ export default function SignUpScreen() {
               onChangeText={setFirstName}
             />
           </View>
+          {/* Last Name */}
           <View style={[styles.inputGroup, styles.inputLastName]}>
             <Text style={styles.label}>Last name</Text>
             <TextInput
@@ -94,58 +92,56 @@ export default function SignUpScreen() {
           </View>
         </View>
 
-        {/* Username Field */}
-        <View style={[styles.inputGroup, styles.usernameSection]}>
-          <Text style={styles.label}>Username</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            value={username}
-            onChangeText={setUsername}
-          />
-        </View>
-
-        {/* Email Field */}
-        <View style={[styles.inputGroup, styles.emailSection]}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
-
-        {/* Password Field */}
-        <View style={[styles.inputGroup, styles.passwordSection]}>
-          <Text style={styles.label}>Password</Text>
-          <View style={styles.passwordContainer}>
+        {/* Other Inputs */}
+        <View style={styles.inputsContainer}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Username</Text>
             <TextInput
-              style={[styles.input, styles.passwordInput]}
-              placeholder="Password"
-              secureTextEntry={!passwordVisible}
-              value={password}
-              onChangeText={setPassword}
+              style={styles.input}
+              placeholder="Username"
+              value={username}
+              onChangeText={setUsername}
             />
-            <TouchableOpacity
-              style={styles.passwordToggle}
-              onPress={() => setPasswordVisible(!passwordVisible)}
-            >
-              <Image
-                source={
-                  passwordVisible
-                    ? require("@/assets/images/eye-slash.png")
-                    : require("@/assets/images/eye.png")
-                }
-                style={styles.passwordToggleIcon}
-              />
-            </TouchableOpacity>
           </View>
-          <Text style={styles.passwordHint}>
-            Password must be at least 8 characters with one uppercase letter and
-            one number
-          </Text>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Password</Text>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={[styles.input, styles.passwordInput]}
+                placeholder="Password"
+                secureTextEntry={!passwordVisible}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity
+                style={styles.passwordToggle}
+                onPress={() => setPasswordVisible(!passwordVisible)}
+              >
+                <Image
+                  source={
+                    passwordVisible
+                      ? require("@/assets/images/eye-slash.png")
+                      : require("@/assets/images/eye.png")
+                  }
+                  style={styles.passwordToggleIcon}
+                />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.passwordHint}>
+              Password must be at least 8 characters with one uppercase letter
+              and one number
+            </Text>
+          </View>
         </View>
 
         {/* Sign Up Button */}
@@ -171,7 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   header: {
-    height: 236,
+    height: 192,
     justifyContent: "center",
     alignItems: "flex-start",
     paddingHorizontal: 16,
@@ -199,43 +195,38 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     textAlign: "left",
     marginTop: 60,
+    marginBottom: 16,
   },
   formContainer: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 32,
-    paddingBottom: 16,
+    paddingTop: 24,
+    paddingBottom: 40,
   },
-  inputRow: {
+  firstLastNameContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 4,
   },
   inputFirstName: {
     marginRight: 4,
+    flex: 1,
   },
   inputLastName: {
     marginLeft: 4,
-  },
-  inputGroup: {
     flex: 1,
   },
-  usernameSection: {
-    marginTop: 24,
-    marginBottom: 16,
+  inputsContainer: {
+    marginBottom: "auto",
   },
-  emailSection: {
+  inputGroup: {
     marginBottom: 16,
-  },
-  passwordSection: {
-    marginBottom: 48,
   },
   label: {
     color: "#1B1918",
     fontSize: 16,
     fontFamily: "Poppins",
     fontWeight: "500",
-    marginBottom: 4,
+    marginBottom: 8,
   },
   input: {
     height: 48,
@@ -285,7 +276,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 8,
   },
   signUpButtonText: {
     color: "#1B1918",
@@ -303,13 +294,11 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     fontWeight: "400",
     color: "#1B1918",
-    marginBottom: 48,
   },
   signInLink: {
     fontSize: 16,
     fontFamily: "Poppins",
     fontWeight: "500",
     color: "#E36714",
-    marginBottom: 48,
   },
 });

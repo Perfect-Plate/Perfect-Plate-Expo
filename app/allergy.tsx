@@ -1,66 +1,72 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   TextInput,
-  FlatList,
   StyleSheet,
-  ScrollView,
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
-import {getPreferenceFormData, storePreferences} from "@/api";
-import {Option} from "commander";
+import { getPreferenceFormData, storePreferences } from "@/api";
 
 export default function AllergyScreen() {
   const router = useRouter();
-
   const allergies = [
     { id: "1", title: "Dairy", icon: require("@/assets/images/dairy.png") },
     { id: "2", title: "Eggs", icon: require("@/assets/images/eggs.png") },
-    { id: "3", title: "Tree Nuts", icon: require("@/assets/images/tree-nuts.png") },
+    {
+      id: "3",
+      title: "Tree Nuts",
+      icon: require("@/assets/images/tree-nuts.png"),
+    },
     { id: "4", title: "Peanuts", icon: require("@/assets/images/peanut.png") },
-    { id: "5", title: "Shellfish", icon: require("@/assets/images/shellfish.png") },
+    {
+      id: "5",
+      title: "Shellfish",
+      icon: require("@/assets/images/shellfish.png"),
+    },
     { id: "6", title: "Wheat", icon: require("@/assets/images/wheat.png") },
     { id: "7", title: "Soy", icon: require("@/assets/images/soy.png") },
     { id: "8", title: "Fish", icon: require("@/assets/images/fish.png") },
     { id: "9", title: "Sesame", icon: require("@/assets/images/sesame.png") },
   ];
 
-
   const [selectedItem, setSelectedItem] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [allergyData, setAllergyData] = useState<string[]>([]);
-      const [queriedOptions, setQueriedOptions] = useState<string[]>([]);
-
+  const [queriedOptions, setQueriedOptions] = useState<string[]>([]);
 
   useEffect(() => {
-  const fetchData = async () => {
-    const data = await getPreferenceFormData("allergy") as unknown as string[];
-    if (data) {
-      // check title from allergies data with id and set the title as the selected item
-      setSelectedItem(
-    allergies
-        .filter((items) => data.includes(items.title)) // Ensure `items.title` is properly typed
-        .map((allergy) => allergy.id)
-      );
-      setAllergyData(data as string[]);
-      setQueriedOptions(data as string[]);
-    }
-  };
-
-  fetchData().then(r => {});
-}, []);
+    const fetchData = async () => {
+      const data = await getPreferenceFormData("allergy");
+      if (data) {
+        setSelectedItem(
+          allergies
+            .filter((items) => data.includes(items.title))
+            .map((allergy) => allergy.id)
+        );
+        setAllergyData(data as string[]);
+        setQueriedOptions(data as string[]);
+      }
+    };
+    fetchData();
+  }, []);
 
   const toggleSelection = (id: string) => {
     if (selectedItem.includes(id)) {
       setSelectedItem(selectedItem.filter((allergyId) => allergyId !== id));
-      setAllergyData(allergyData.filter((allergy) => allergy !== allergies.find((allergy) => allergy.id === id)?.title));
+      setAllergyData(
+        allergyData.filter(
+          (allergy) =>
+            allergy !== allergies.find((allergy) => allergy.id === id)?.title
+        )
+      );
     } else {
       setSelectedItem([...selectedItem, id]);
-      if(allergies.find((allergy) => allergy.id === id)?.title){
-        setAllergyData([...allergyData, allergies.find((allergy) => allergy.id === id)?.title] as string[]);
+      const title = allergies.find((allergy) => allergy.id === id)?.title;
+      if (title) {
+        setAllergyData([...allergyData, title]);
       }
     }
   };
@@ -75,39 +81,20 @@ export default function AllergyScreen() {
 
   const removeSelectedAllergy = (id: string) => {
     setSelectedItem(selectedItem.filter((allergyId) => allergyId !== id));
-    // check from allergies data with id and remove its related title from the list
     const allergyTitle = allergies.find((allergy) => allergy.id === id)?.title;
     if (allergyTitle) {
       setAllergyData(allergyData.filter((allergy) => allergy !== allergyTitle));
     }
   };
 
-  const renderAllergyItem = ({ item }: { item: { id: string; title: string; icon: any } }) => (
-    <TouchableOpacity
-      style={[
-        styles.allergyItem,
-        selectedItem.includes(item.id) && styles.selectedAllergyItem,
-      ]}
-      onPress={() => toggleSelection(item.id)}
-    >
-      {selectedItem.includes(item.id) && (
-        <View style={styles.checkmark}>
-          <View style={styles.checkmarkCircle}>
-            <Text style={styles.checkmarkText}>✔</Text>
-          </View>
-        </View>
-      )}
-
-      <Image source={item.icon} style={styles.allergyIcon} />
-      <Text style={styles.allergyText}>{item.title}</Text>
-    </TouchableOpacity>
-  );
-
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Text style={styles.backArrow}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Dietary Restrictions</Text>
@@ -115,16 +102,40 @@ export default function AllergyScreen() {
 
       {/* Main Content */}
       <View style={styles.content}>
-        <Text style={styles.title}>Are there any ingredients you want to avoid?</Text>
+        <Text style={styles.title}>
+          Are there any ingredients you want to avoid?
+        </Text>
 
-        <FlatList
-          data={allergies}
-          renderItem={(item) => renderAllergyItem(item)}
-          keyExtractor={(item) => item.id}
-          numColumns={3}
-          columnWrapperStyle={styles.columnWrapper}
-          contentContainerStyle={styles.allergyList}
-        />
+        {/* Allergy Items */}
+        <View style={[styles.allergyList]}>
+          {Array.from(
+            { length: Math.ceil(allergies.length / 3) },
+            (_, rowIndex) => (
+              <View key={rowIndex} style={styles.row}>
+                {allergies.slice(rowIndex * 3, rowIndex * 3 + 3).map((item) => (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={[
+                      styles.allergyItem,
+                      selectedItem.includes(item.id) &&
+                        styles.selectedAllergyItem,
+                    ]}
+                    onPress={() => toggleSelection(item.id)}
+                  >
+                    {selectedItem.includes(item.id) && (
+                      <Image
+                        source={require("@/assets/images/check.png")}
+                        style={styles.checkIcon}
+                      />
+                    )}
+                    <Image source={item.icon} style={styles.allergyIcon} />
+                    <Text style={styles.allergyText}>{item.title}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )
+          )}
+        </View>
 
         <Text style={styles.insertBarDescription}>Add more restrictions:</Text>
 
@@ -140,7 +151,8 @@ export default function AllergyScreen() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView horizontal style={styles.selectedItemContainer}>
+        {/* Custom Added Allergies */}
+        <View style={styles.selectedItemContainer}>
           {selectedItem
             .filter((id) => !allergies.some((allergy) => allergy.id === id))
             .map((id) => (
@@ -151,20 +163,20 @@ export default function AllergyScreen() {
                 </TouchableOpacity>
               </View>
             ))}
-        </ScrollView>
+        </View>
 
         <TouchableOpacity
           style={styles.continueButton}
           onPress={() => {
-            if(allergyData !== queriedOptions) {
-              storePreferences("allergy", allergyData).then(() => {
-                    router.push("/splitOption")
-                  }
+            if (allergyData !== queriedOptions) {
+              storePreferences("allergy", allergyData).then(() =>
+                router.push("/splitOption")
               );
-            }else {
+            } else {
               router.push("/splitOption");
             }
-        }}>
+          }}
+        >
           <Text style={styles.continueButtonText}>Continue</Text>
         </TouchableOpacity>
       </View>
@@ -174,32 +186,37 @@ export default function AllergyScreen() {
 
 const styles = StyleSheet.create({
   container: {
-        flex: 1,
-        backgroundColor: "#EDE9E8",
-    },
-    continueButton: {
-        width: "90%",
-        height: 50,
-        backgroundColor: "#F4A691",
-        borderRadius: 40,
-        justifyContent: "center",
-        alignItems: "center",
-        position: "absolute",
-        bottom: 60,
-        alignSelf: "center",
-    },
-    inactiveContinueButton: {
-        backgroundColor: "#D3D3D3",
-    },
-    continueButtonText: {
-        color: "#1B1918",
-        fontSize: 18,
-        fontFamily: "Poppins",
-        fontWeight: "500",
-    },
-    inactiveContinueButtonText: {
-        color: "#808080",
-    },
+    flex: 1,
+    backgroundColor: "#EDE9E8",
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 12,
+  },
+  continueButton: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "#F4A691",
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 40,
+    alignSelf: "center",
+  },
+  inactiveContinueButton: {
+    backgroundColor: "#D3D3D3",
+  },
+  continueButtonText: {
+    color: "#1B1918",
+    fontSize: 18,
+    fontFamily: "Poppins",
+    fontWeight: "500",
+  },
+  inactiveContinueButtonText: {
+    color: "#808080",
+  },
   header: {
     height: 110,
     backgroundColor: "#FFF",
@@ -220,7 +237,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: "Poppins",
     fontWeight: "400",
     textAlign: "center",
@@ -230,7 +247,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 16,
   },
   title: {
     fontSize: 28,
@@ -238,8 +254,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#1B1918",
     textAlign: "left",
-    marginTop: 35,
-    marginBottom: 25,
+    marginTop: 32,
+    marginBottom: 24,
   },
   allergyList: {
     paddingBottom: 1,
@@ -254,7 +270,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 20,
     backgroundColor: "#FFF",
-    borderRadius: 10,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: "#E0E0E0",
     marginHorizontal: 5,
@@ -263,6 +279,13 @@ const styles = StyleSheet.create({
   selectedAllergyItem: {
     borderColor: "#A6C463",
     backgroundColor: "#E6F4E6",
+  },
+  checkIcon: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    width: 20,
+    height: 20,
   },
   allergyIcon: {
     width: 30,
@@ -304,18 +327,19 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     color: "#1B1918",
     marginBottom: 8,
+    marginTop: 40,
   },
   insertBarContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 12,
   },
   input: {
     flex: 1,
-    height: 40,
+    height: 48,
     borderColor: "#DDD",
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 12,
     paddingHorizontal: 10,
     backgroundColor: "#FFF",
     fontFamily: "Poppins",
@@ -323,7 +347,8 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#F4A691",
-    borderRadius: 20,
+    borderRadius: 12,
+    height: 40,
     paddingHorizontal: 15,
     paddingVertical: 8,
     justifyContent: "center",
@@ -343,7 +368,7 @@ const styles = StyleSheet.create({
   selectedBubble: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: 15,
     marginRight: 10,

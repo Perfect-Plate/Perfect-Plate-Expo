@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
-import {storePreferences} from "@/api";
+import { storePreferences } from "@/api";
 
 const MealPlanningCalendar: React.FC = () => {
   const router = useRouter();
@@ -18,8 +18,13 @@ const MealPlanningCalendar: React.FC = () => {
 
   const isValidDate = (day: number, month: number, year: number) => {
     const date = new Date(year, month, day);
-    const dayOfYear = Math.floor((date.getTime() - new Date(year, 0, 0).getTime()) / 86400000);
-    const todayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+    const dayOfYear = Math.floor(
+      (date.getTime() - new Date(year, 0, 0).getTime()) / 86400000
+    );
+    const todayOfYear = Math.floor(
+      (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) /
+        86400000
+    );
     return dayOfYear >= todayOfYear && dayOfYear <= todayOfYear + 13;
   };
 
@@ -69,22 +74,22 @@ const MealPlanningCalendar: React.FC = () => {
     // store date as a string in the format "YYYY-MM-DD"
     const selectedDate = `${currentYear}-${currentMonth + 1}-${day}`;
     setSelectedDates((prev) =>
-      prev.includes(selectedDate) ? prev.filter((d) => d !== selectedDate) : [...prev, selectedDate]
+      prev.includes(selectedDate)
+        ? prev.filter((d) => d !== selectedDate)
+        : [...prev, selectedDate]
     );
   };
 
   const handleContinue = () => {
-        if (selectedDates.length > 0) {
-          storePreferences("mealPlanCalendar", selectedDates).then(r => {
-                  router.push({
-                    pathname: "/meals",
-                   params: {daysPlanned: selectedDays.length},
-                 })
-                });
-
-          }
-        }
-
+    if (selectedDates.length > 0) {
+      storePreferences("mealPlanCalendar", selectedDates).then((r) => {
+        router.push({
+          pathname: "/meals",
+          params: { daysPlanned: selectedDays.length },
+        });
+      });
+    }
+  };
 
   const renderDay = (day: number | null) => {
     if (!day) return <View style={styles.dayEmpty} />;
@@ -96,7 +101,11 @@ const MealPlanningCalendar: React.FC = () => {
         key={day}
         style={[
           styles.day,
-          isInRange ? (isSelected ? styles.daySelectedWhite : styles.dayInRange) : styles.dayOutOfRange,
+          isInRange
+            ? isSelected
+              ? styles.daySelectedWhite
+              : styles.dayInRange
+            : styles.dayOutOfRange,
         ]}
         onPress={() => isInRange && toggleDay(day)}
         disabled={!isInRange}
@@ -136,15 +145,22 @@ const MealPlanningCalendar: React.FC = () => {
     <View style={styles.container}>
       {/* Header Section */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Text style={styles.backArrow}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Meal Planning - Calendar</Text>
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.mainHeading}>Which days would you like to plan meals for?</Text>
-        <Text style={styles.notation}>Choose specific days, or select a time range</Text>
+        <Text style={styles.mainHeading}>
+          Which days would you like to plan meals for?
+        </Text>
+        <Text style={styles.notation}>
+          Choose specific days, or select a time range
+        </Text>
         <Text style={styles.notation}>(up to 2 weeks)</Text>
       </View>
 
@@ -189,7 +205,10 @@ const MealPlanningCalendar: React.FC = () => {
                 day !== null ? (
                   renderDay(day)
                 ) : (
-                  <View key={`empty-${weekIndex}-${dayIndex}`} style={styles.dayEmpty} />
+                  <View
+                    key={`empty-${weekIndex}-${dayIndex}`}
+                    style={styles.dayEmpty}
+                  />
                 )
               )}
             </View>
@@ -203,19 +222,23 @@ const MealPlanningCalendar: React.FC = () => {
         </Text>
 
         {/* Continue Button */}
-            <TouchableOpacity
-                style={[
-                    styles.continueButton,
-                    selectedDates.length === 0 && styles.inactiveContinueButton
-                ]}
-                onPress={handleContinue}
-                disabled={selectedDates.length === 0}
-            >
-                <Text style={[
-                    styles.continueButtonText,
-                    selectedDates.length === 0 && styles.inactiveContinueButtonText
-                ]}>Continue</Text>
-            </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.continueButton,
+            selectedDates.length === 0 && styles.inactiveContinueButton,
+          ]}
+          onPress={handleContinue}
+          disabled={selectedDates.length === 0}
+        >
+          <Text
+            style={[
+              styles.continueButtonText,
+              selectedDates.length === 0 && styles.inactiveContinueButtonText,
+            ]}
+          >
+            Continue
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -227,17 +250,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#EDE9E8",
   },
   inactiveContinueButton: {
-        backgroundColor: "#D3D3D3",
-    },
-    continueButtonText: {
-        color: "#1B1918",
-        fontSize: 18,
-        fontFamily: "Poppins",
-        fontWeight: "500",
-    },
-    inactiveContinueButtonText: {
-        color: "#808080",
-    },
+    backgroundColor: "#D3D3D3",
+  },
+  continueButtonText: {
+    color: "#1B1918",
+    fontSize: 18,
+    fontFamily: "Poppins",
+    fontWeight: "500",
+  },
+  inactiveContinueButtonText: {
+    color: "#808080",
+  },
   header: {
     height: 110,
     backgroundColor: "#FFF",
@@ -258,7 +281,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: "Poppins",
     fontWeight: "400",
     textAlign: "center",
@@ -267,14 +290,14 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 16,
-    paddingVertical: 10,
   },
   mainHeading: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "500",
     color: "#1B1918",
     textAlign: "left",
-    marginBottom: 8,
+    marginTop: 32,
+    marginBottom: 12,
   },
   notation: {
     fontSize: 16,
@@ -282,10 +305,10 @@ const styles = StyleSheet.create({
     color: "#737170",
   },
   calendarSection: {
-    flex: 1,
     backgroundColor: "#FFF",
     borderRadius: 12,
     margin: 16,
+    marginTop: 32,
     padding: 16,
   },
   calendarHeader: {
@@ -318,7 +341,7 @@ const styles = StyleSheet.create({
     color: "#737170",
   },
   calendarBody: {
-    flex: 1,
+    flexDirection: "column",
   },
   calendarRow: {
     flexDirection: "row",
@@ -334,15 +357,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   dayInRange: {
-    backgroundColor: "#C5E47F",
+    backgroundColor: "#FFF",
+    borderColor: "#C5E47F",
+    borderWidth: 2,
   },
   dayOutOfRange: {
     backgroundColor: "#EDE9E8",
   },
   daySelectedWhite: {
-    backgroundColor: "#FFF",
-    borderColor: "#C5E47F",
-    borderWidth: 2,
+    backgroundColor: "#C5E47F",
   },
   dayText: {
     fontSize: 16,
@@ -361,20 +384,25 @@ const styles = StyleSheet.create({
     height: 40,
   },
   footerSection: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 40,
     backgroundColor: "#FFF",
+    position: "absolute",
+    right: 0,
+    left: 0,
+    bottom: 0,
   },
   selectedText: {
-    fontSize: 16,
-    marginBottom: 8,
+    fontSize: 18,
+    marginBottom: 16,
   },
   continueButton: {
     backgroundColor: "#F4A691",
     padding: 12,
     borderRadius: 40,
-    height: 50,
+    height: 48,
     alignItems: "center",
-    marginBottom: 25,
   },
 });
 
