@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 type NavBarProps = {
-    currentPage: 'home' | 'favorites' | 'calendar' | 'grocery' | 'profile';
+    currentPage?: 'home' | 'favorites' | 'calendar' | 'grocery' | 'profile' | null;
     onNavigate: (page: string) => void;
 };
 

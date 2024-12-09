@@ -1,116 +1,318 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
+import { useRouter } from "expo-router";
+import NavBar from "./NavBar";
 
-const RecipeDetailsScreen = () => {
-  const recipe = {
-    title: "Classic Spaghetti Bolognese",
-    description:
-      "A hearty Italian-inspired dish featuring a rich, savory meat sauce simmered with tomatoes, garlic, onions, and aromatic herbs.",
-    servings: 1,
-    prepTime: "20 min",
-    cookTime: "30 min",
-    ingredients: [
-      "400g spaghetti",
-      "1 medium onion, finely chopped",
-      "500g ground beef",
-      "1 can (400g) diced tomatoes",
-      "2 tablespoons tomato paste",
-      "1 teaspoon dried oregano",
-      "1 teaspoon dried basil",
-      "1 cup beef stock",
-      "Salt and pepper, to taste",
-      "Fresh parsley, for garnish",
-      "Grated Parmesan cheese, for serving",
-    ],
-    instructions: [
-      "Prepare the ingredients: Chop onion, garlic, carrot, and celery; gather the remaining ingredients.",
-      "Cook the aromatics: Heat olive oil, sauté onion, garlic, carrot, celery for 5 minutes.",
-      "Add ground beef: Brown the meat, then add diced tomatoes, tomato paste, and beef stock.",
-      "Simmer the sauce: Let it cook on low heat for 20 minutes.",
-      "Cook spaghetti: Boil water, add spaghetti, and cook according to package instructions.",
-      "Serve: Plate the spaghetti, pour the sauce on top, garnish with parsley and Parmesan.",
-    ],
+export default function RecipeDetailsScreen() {
+  const router = useRouter();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+
+  const toggleFavorite = () => {
+    if (!isFavorite) {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 2000); // Hide alert after 2 seconds
+    }
+    setIsFavorite((prev) => !prev);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {/* Recipe Title */}
-        <Text style={styles.title}>{recipe.title}</Text>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backArrow}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Custom Recipe</Text>
+      </View>
 
-        {/* Description */}
-        <Text style={styles.description}>{recipe.description}</Text>
-
-        {/* Metadata */}
-        <View style={styles.metadata}>
-          <Text style={styles.metaText}>Servings: {recipe.servings}</Text>
-          <Text style={styles.metaText}>Prep Time: {recipe.prepTime}</Text>
-          <Text style={styles.metaText}>Cook Time: {recipe.cookTime}</Text>
+      {/* Content */}
+      <ScrollView contentContainerStyle={styles.content}>
+        {/* Recipe Image */}
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("@/assets/images/recipeHolder.jpeg")} // Replace with your image source
+            style={styles.recipeImage}
+          />
+          <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
+            <Image
+              source={
+                isFavorite
+                  ? require("@/assets/images/heartFilled.png") // Red heart image
+                  : require("@/assets/images/heart.png") // Empty heart image
+              }
+              style={styles.heartIcon}
+            />
+          </TouchableOpacity>
         </View>
 
-        {/* Ingredients */}
+        {/* Recipe Details */}
+        <Text style={styles.recipeTitle}>Classic Spaghetti Bolognese</Text>
+        <Text style={styles.recipeDescription}>
+          Classic Spaghetti Bolognese is a hearty Italian-inspired dish
+          featuring a rich, savory meat sauce simmered with tomatoes, garlic,
+          onions, and aromatic herbs.
+        </Text>
+
+        {/* Divider */}
+        <View style={styles.divider} />
+
+        {/* Serving and Time Info */}
+        <View style={styles.infoRow}>
+          <View style={styles.infoColumn}>
+            <Text style={styles.infoHeader}>Servings</Text>
+            <Text style={styles.infoText}>1</Text>
+          </View>
+          <View style={styles.infoColumn}>
+            <Text style={styles.infoHeader}>Prep time</Text>
+            <Text style={styles.infoText}>20 min</Text>
+          </View>
+          <View style={styles.infoColumn}>
+            <Text style={styles.infoHeader}>Cook time</Text>
+            <Text style={styles.infoText}>30 min</Text>
+          </View>
+        </View>
+
+        {/* Divider */}
+        <View style={styles.divider} />
+
+        {/* Ingredients Section */}
         <Text style={styles.sectionTitle}>Ingredients</Text>
-        {recipe.ingredients.map((ingredient, index) => (
-          <Text key={index} style={styles.ingredient}>
-            - {ingredient}
-          </Text>
-        ))}
+        <View style={styles.listContainer}>
+          {[
+            "400g (14 oz) spaghetti",
+            "1 medium onion, finely chopped",
+            "500g (1 lb) ground beef",
+            "1 can (400g) diced tomatoes",
+            "2 tablespoons tomato paste",
+            "1 teaspoon dried oregano",
+            "1 teaspoon dried basil",
+            "1 cup beef stock",
+            "Salt and pepper, to taste",
+            "Fresh parsley, for garnish",
+            "Grated Parmesan cheese, for serving",
+          ].map((item, index) => (
+            <Text key={index} style={styles.listItem}>
+              • {item}
+            </Text>
+          ))}
+        </View>
 
-        {/* Instructions */}
+        {/* Instructions Section */}
         <Text style={styles.sectionTitle}>Instructions</Text>
-        {recipe.instructions.map((step, index) => (
-          <Text key={index} style={styles.step}>
-            {index + 1}. {step}
-          </Text>
-        ))}
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+        <View style={styles.listContainer}>
+          {[
+            "Prepare the ingredients. Chop onion, garlic, carrot, and celery finely.",
+            "Heat olive oil in a large skillet over medium heat. Add onion, garlic, carrot, and celery. Sauté for 5 minutes until softened.",
+            "Add the ground beef to the skillet. Cook until browned, breaking up the meat with a spoon, about 8 minutes.",
+            "Stir in diced tomatoes, tomato paste, oregano, basil, and beef stock. Season with salt and pepper. Lower the heat and let it simmer uncovered for 20–30 minutes, stirring occasionally.",
+            "Bring a large pot of salted water to a boil. Cook spaghetti according to package instructions. Drain and set aside.",
+            "Toss the cooked spaghetti with the Bolognese sauce or serve the sauce over the pasta. Garnish with parsley and grated Parmesan cheese.",
+          ].map((item, index) => (
+            <Text key={index} style={styles.listItem}>
+              • {item}
+            </Text>
+          ))}
+        </View>
 
-export default RecipeDetailsScreen;
+        {/* Buttons */}
+        <TouchableOpacity
+          style={styles.generateButton}
+          onPress={() => router.push("/home")}
+        >
+          <Text style={styles.generateButtonText}>Explore more recipes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.generateButton, styles.generateAgainButton]}
+          onPress={() => router.push("/recipeGenerator")}
+        >
+          <Text style={[styles.generateButtonText, styles.generateAgainText]}>
+            Generate again
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      {/* Alert */}
+      {showAlert && (
+        <View style={styles.alertContainer}>
+          <Text style={styles.alertText}>Added to Favorites</Text>
+        </View>
+      )}
+
+      {/* NavBar */}
+      <NavBar currentPage={null} onNavigate={(page) => console.log(page)} />
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F6F4F4",
-    padding: 16,
+    backgroundColor: "#EDE9E8",
   },
-  title: {
+  header: {
+    height: 110,
+    backgroundColor: "#FFF",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#DDD",
+  },
+  backButton: {
+    position: "absolute",
+    left: 16,
+  },
+  backArrow: {
     fontSize: 24,
-    fontWeight: "700",
     color: "#1B1918",
-    marginBottom: 8,
+    marginTop: 50,
   },
-  description: {
-    fontSize: 16,
-    fontStyle: "italic",
-    color: "#555",
+  headerTitle: {
+    fontSize: 18,
+    fontFamily: "Poppins",
+    fontWeight: "400",
+    textAlign: "center",
+    color: "#1B1918",
+    marginTop: 50,
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingBottom: 80,
+  },
+  imageContainer: {
+    position: "relative",
+    marginBottom: 32,
+    marginTop: 24,
+  },
+  recipeImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: 12,
+  },
+  heartButton: {
+    position: "absolute",
+    bottom: 8,
+    right: 16,
+    backgroundColor: "#FFF",
+    borderRadius: 40,
+    padding: 8,
+  },
+  heartIcon: {
+    width: 32,
+    height: 32,
+    tintColor: "#B55D45",
+  },
+  recipeTitle: {
+    fontSize: 28,
+    fontFamily: "Poppins",
+    fontWeight: "500",
+    color: "#1B1918",
     marginBottom: 16,
   },
-  metadata: {
+  recipeDescription: {
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: "400",
+    color: "#1B1918",
+    marginBottom: 24,
+  },
+  divider: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#C7C5C5",
+    marginBottom: 16,
+  },
+  infoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 16,
   },
-  metaText: {
-    fontSize: 14,
-    color: "#777",
+  infoColumn: {
+    alignItems: "center",
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
+  infoHeader: {
+    fontSize: 20,
+    fontFamily: "Poppins",
+    fontWeight: "500",
     color: "#1B1918",
     marginBottom: 8,
   },
-  ingredient: {
-    fontSize: 14,
-    color: "#333",
-    marginBottom: 4,
+  infoText: {
+    fontSize: 18,
+    fontFamily: "Poppins",
+    fontWeight: "400",
+    color: "#1B1918",
   },
-  step: {
-    fontSize: 14,
-    color: "#333",
+  sectionTitle: {
+    fontSize: 20,
+    fontFamily: "Poppins",
+    fontWeight: "500",
+    color: "#1B1918",
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  listContainer: {
+    marginBottom: 24,
+  },
+  listItem: {
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: "400",
+    color: "#1B1918",
+    lineHeight: 24,
     marginBottom: 8,
+  },
+  generateButton: {
+    height: 48,
+    backgroundColor: "#F4A691",
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  generateButtonText: {
+    color: "#1B1918",
+    fontSize: 18,
+    fontFamily: "Poppins",
+    fontWeight: "500",
+  },
+  generateAgainButton: {
+    backgroundColor: "#FFF",
+    borderWidth: 1,
+    borderColor: "#F4A691",
+  },
+  generateAgainText: {
+    color: "#1B1918",
+  },
+  alertContainer: {
+    position: "absolute",
+    bottom: 112, // 80px (NavBar height) + 32px (desired spacing)
+    left: 16,
+    right: 16,
+    backgroundColor: "#F4A691",
+    borderRadius: 8,
+    padding: 16,
+    shadowColor: "rgba(74, 69, 68, 0.15)",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 12,
+    alignItems: "center",
+},
+  alertText: {
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: "400",
+    color: "#1B1918",
   },
 });
