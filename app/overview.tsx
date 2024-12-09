@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: "Poppins",
     fontWeight: "400",
     textAlign: "center",
