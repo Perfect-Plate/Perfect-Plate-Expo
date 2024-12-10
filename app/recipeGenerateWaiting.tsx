@@ -23,7 +23,11 @@ const RecipeLoadingScreen = () => {
 
       {/* Centered Content */}
       <View style={styles.centeredContent}>
-        <ActivityIndicator size="large" color="#F4A691" style={styles.largeIndicator} />
+        <ActivityIndicator
+          size="large"
+          color="#F4A691"
+          style={styles.largeIndicator}
+        />
         <Text style={styles.message}>Crafting your personalized recipe...</Text>
       </View>
     </View>
@@ -37,40 +41,40 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#EDE9E8",
   },
-//   header: {
-//     height: 110,
-//     backgroundColor: "#FFF",
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     paddingHorizontal: 16,
-//     borderBottomWidth: 1,
-//     borderBottomColor: "#DDD",
-//   },
-//   backButton: {
-//     position: "absolute",
-//     left: 16,
-//   },
-//   backArrow: {
-//     fontSize: 24,
-//     color: "#1B1918",
-//     marginTop: 50,
-//   },
-//   headerTitle: {
-//     fontSize: 20,
-//     fontFamily: "Poppins",
-//     fontWeight: "400",
-//     textAlign: "center",
-//     color: "#1B1918",
-//     marginTop: 50,
-//   },
+  //   header: {
+  //     height: 110,
+  //     backgroundColor: "#FFF",
+  //     flexDirection: "row",
+  //     alignItems: "center",
+  //     justifyContent: "center",
+  //     paddingHorizontal: 16,
+  //     borderBottomWidth: 1,
+  //     borderBottomColor: "#DDD",
+  //   },
+  //   backButton: {
+  //     position: "absolute",
+  //     left: 16,
+  //   },
+  //   backArrow: {
+  //     fontSize: 24,
+  //     color: "#1B1918",
+  //     marginTop: 50,
+  //   },
+  //   headerTitle: {
+  //     fontSize: 20,
+  //     fontFamily: "Poppins",
+  //     fontWeight: "400",
+  //     textAlign: "center",
+  //     color: "#1B1918",
+  //     marginTop: 50,
+  //   },
   centeredContent: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   largeIndicator: {
-    transform: [{ scale: 3 }], // Scale the spinner to make it significantly larger
+    transform: [{ scale: 2 }], // Scale the spinner to make it significantly larger
     marginBottom: 32,
   },
   message: {

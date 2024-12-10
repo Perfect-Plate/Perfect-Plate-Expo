@@ -227,6 +227,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: "#1B1918",
     marginBottom: 24,
+    lineHeight: 24,
   },
   divider: {
     borderBottomWidth: 1,

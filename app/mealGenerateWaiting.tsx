@@ -68,9 +68,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 110,
+    marginHorizontal: 64,
   },
   largeIndicator: {
-    transform: [{ scale: 3 }], // Scale the spinner to make it significantly larger
+    transform: [{ scale: 2 }], // Scale the spinner to make it significantly larger
     marginBottom: 32,
   },
   message: {
