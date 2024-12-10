@@ -19,7 +19,7 @@ export default function RecipeGeneratorScreen() {
 
     // Navigate to the loading screen
     router.push({
-      pathname: "/recipeDetailsScreen", // Adjust the path to your loading screen
+      pathname: "/recipeGenerateWaiting", // Adjust the path to your loading screen
       params: { recipeInput }, // Pass the input to the loading screen
     });
   };
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#8F8D8C",
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 8,
     marginBottom: 16,
   },
   input: {
