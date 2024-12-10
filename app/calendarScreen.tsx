@@ -103,6 +103,7 @@ const calendarScreen: React.FC = () => {
             <View style={styles.selectedDateContainer}>
                 <Text style={styles.selectedDateText}>
                     {selectedDay ? selectedDay.toDateString() : "None"}
+                    {/* Month, Day, Week*/}
                 </Text>
             </View>
 
@@ -198,6 +199,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     selectedDateContainer: {
+        marginTop: 10,
         padding: 16,
     },
     selectedDateText: {
@@ -226,6 +228,7 @@ const styles = StyleSheet.create({
         fontWeight: "500",
     },
     sectionContent: {
+        marginTop: -10,
         flexDirection: "column",
         gap: 16,
     },
@@ -237,18 +240,18 @@ const styles = StyleSheet.create({
         elevation: 2,
         marginBottom: 8,
         alignItems: "center",
-        padding: 8,
+        //padding: 8,
     },
     recipeImage: {
         width: 150,
-        height: 100,
+        height: 80,
         resizeMode: "cover",
         borderRadius: 8,
     },
     textContainer: {
         flex: 1,
         justifyContent: "center",
-        paddingHorizontal: 8,
+        paddingHorizontal: 16,
     },
     recipeName: {
         fontSize: 16,
@@ -285,8 +288,8 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         paddingVertical: 8,
         paddingHorizontal: 32,
-        height: 44,
-        width: 400,
+        height: 48,
+        width: 350,
         marginTop: 4,
     },
     generateButtonText: {
@@ -294,14 +297,15 @@ const styles = StyleSheet.create({
         color: "#141412",
         fontFamily: "Poppins",
         fontWeight: "500",
-        marginLeft: 85,
-        marginTop: 2,
+        marginLeft: 50,
+        marginTop: 4,
     },
     calendarSection: {
         backgroundColor: "#FFF",
         borderRadius: 12,
         padding: 10,
-        marginTop: 16,
+        marginTop: 8,
+        marginBottom: 8,
     },
     calendarHeader: {
         flexDirection: "row",
@@ -341,6 +345,7 @@ const styles = StyleSheet.create({
     },
     daySelected: {
         backgroundColor: "#F4A691",
+        color:"black",
     },
     dayNotSelectable: {
         opacity: 0.3,
@@ -352,7 +357,7 @@ const styles = StyleSheet.create({
     },
     dayTextSelected: {
         fontSize: 16,
-        color: "#FFF",
+        color: "black",
     },
     dayLabel: {
         fontSize: 12,

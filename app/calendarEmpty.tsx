@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
     },
     selectedDateContainer: {
         padding: 16,
+        marginTop: 10,
     },
     selectedDateText: {
         fontSize: 18,
@@ -285,7 +286,7 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         paddingVertical: 8,
         paddingHorizontal: 32,
-        height: 44,
+        height: 48,
         width: 400,
         marginTop: 4,
     },
@@ -295,13 +296,14 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins",
         fontWeight: "500",
         marginLeft: 85,
-        marginTop: 2,
+        marginTop: 4,
     },
     calendarSection: {
         backgroundColor: "#FFF",
         borderRadius: 12,
         padding: 10,
-        marginTop: 16,
+        marginTop: 8,
+        marginBottom: 8,
     },
     calendarHeader: {
         flexDirection: "row",
@@ -352,7 +354,7 @@ const styles = StyleSheet.create({
     },
     dayTextSelected: {
         fontSize: 16,
-        color: "#FFF",
+        color: "black",
     },
     dayLabel: {
         fontSize: 12,

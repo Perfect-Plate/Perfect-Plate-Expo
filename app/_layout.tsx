@@ -46,7 +46,9 @@ export default function RootLayout() {
           <Stack.Screen name="addPreferences" options={{ headerShown: false }} />
           <Stack.Screen name="overview" options={{ headerShown: false }} />
           <Stack.Screen name="signIn" options={{ headerShown: false }} />
-          <Stack.Screen name="signUp" options={{ headerShown: false }} />          
+          <Stack.Screen name="signUp" options={{ headerShown: false }} /> 
+          <Stack.Screen name="calendarScreen" options={{ headerShown: false }} /> 
+          <Stack.Screen name="calendarEmpty" options={{ headerShown: false }} />         
           <Stack.Screen name="+not-found" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
