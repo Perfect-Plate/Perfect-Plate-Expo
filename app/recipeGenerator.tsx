@@ -15,12 +15,10 @@ export default function RecipeGeneratorScreen() {
   const router = useRouter();
 
   const handleGenerateRecipe = () => {
-    console.log("Generating recipe for:", recipeInput);
-
     // Navigate to the loading screen
     router.push({
       pathname: "/recipeGenerateWaiting", // Adjust the path to your loading screen
-      params: { recipeInput }, // Pass the input to the loading screen
+      params: { userDescription: recipeInput }, // Pass the input to the loading screen
     });
   };
 

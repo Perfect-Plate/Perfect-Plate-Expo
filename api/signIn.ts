@@ -1,4 +1,5 @@
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface SignInRequest {
     email: string;
@@ -17,7 +18,14 @@ const signIn = async (req: SignInRequest) => {
                 },
             }
         );
-        return response;
+        if (response.status == 200) {
+            await AsyncStorage.setItem("user", JSON.stringify({
+                status: "true",
+                email,
+                username: response.data.username
+            }));
+        }
+            return response;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             console.error("Error signing in:", error.response?.data || error.message);

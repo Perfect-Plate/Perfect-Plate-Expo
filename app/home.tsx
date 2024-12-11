@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   View,
   Text,
@@ -10,9 +10,24 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router"; // Import useRouter for navigation
 import NavBar from "./NavBar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home: React.FC = () => {
   const router = useRouter(); // Initialize router for navigation
+  const [user, setUser] = useState<any>({}); // Initialize user state
+
+
+   useEffect(() => {
+    const GetUserData = async () => {
+      const user: any = await AsyncStorage.getItem("user");
+        if (user) {
+            setUser(JSON.parse(user));
+        } else {
+            setUser({username: ""});
+        }
+      }
+      GetUserData().then(r => {});
+    }, []);
 
   return (
     <View style={styles.container}>
@@ -23,12 +38,15 @@ const Home: React.FC = () => {
           style={styles.headerImage}
         />
         <Text style={styles.headerText}>
-          What are we cooking today, [username]?
+          What are we cooking today, {user.username}?
         </Text>
         <Text style={styles.subHeaderText}>Generate custom recipes</Text>
         <TouchableOpacity
           style={styles.searchContainer}
-          onPress={() => router.push("/recipeGenerator")} // Navigate to RecipeGenerator page
+          onPress={() => {
+            if (user.status !== false) {
+            router.push("/recipeGenerator")}
+          }}// Navigate to RecipeGenerator page
         >
           <TextInput
             style={styles.searchInput}
@@ -62,7 +80,15 @@ const Home: React.FC = () => {
           style={styles.mealPlanImage}
         />
         <Text style={styles.mealPlanText}>Ready for a new meal plan?</Text>
-        <TouchableOpacity style={styles.generateButton}>
+        <TouchableOpacity
+            onPress={() => {
+              if (user.status !== false) {
+                router.push("/recipeGenerator")
+              }
+            }
+            }
+
+            style={styles.generateButton}>
           <Text style={styles.generateButtonText}>Generate meal plan</Text>
         </TouchableOpacity>
       </View>

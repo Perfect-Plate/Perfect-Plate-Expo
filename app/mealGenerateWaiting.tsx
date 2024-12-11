@@ -1,15 +1,38 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
+  Animated,
+  Easing,
+  TouchableOpacity, ActivityIndicator,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import {SavePreference} from "@/api";
+import { LocalData } from "@/api/savePreference";
 
 const MealPlanLoadingScreen = () => {
   const router = useRouter();
+  const searchParams = useLocalSearchParams();
+  const spinValue = useRef(new Animated.Value(0)).current;
+
+
+  useEffect(() => {
+      const generateMeal = async () => {
+           const ldata = searchParams["data"] as unknown as LocalData;
+           const response = await SavePreference({ localData: ldata})
+              if (response?.status === 200) {
+                 router.push({
+                    pathname: "/calendarScreen",
+                    params: { mealPlan: JSON.stringify(response.data) },
+                 });
+              } else {
+                 console.error("Error generating meal plan:", response);
+              }
+        };
+
+        generateMeal().catch((err) => {}); // Add error handling
+    }, []);
 
   return (
     <View style={styles.container}>

@@ -147,26 +147,26 @@ export default function CuisineScreen() {
         <TouchableOpacity
           style={[
             styles.continueButton,
-            !Object.keys(preferences).some(
-              (key) =>
-                preferences[key] === "like" || preferences[key] === "dislike"
-            ) && styles.inactiveContinueButton,
+            // !Object.keys(preferences).some(
+            //   (key) =>
+            //     preferences[key] === "like" || preferences[key] === "dislike"
+            // ) && styles.inactiveContinueButton,
           ]}
           onPress={handleContinue}
-          disabled={
-            !Object.keys(preferences).some(
-              (key) =>
-                preferences[key] === "like" || preferences[key] === "dislike"
-            )
-          }
+          // disabled={
+          //   !Object.keys(preferences).some(
+          //     (key) =>
+          //       preferences[key] === "like" || preferences[key] === "dislike"
+          //   )
+          // }
         >
           <Text
             style={[
               styles.continueButtonText,
-              !Object.keys(preferences).some(
-                (key) =>
-                  preferences[key] === "like" || preferences[key] === "dislike"
-              ) && styles.inactiveContinueButtonText,
+              // !Object.keys(preferences).some(
+              //   (key) =>
+              //     preferences[key] === "like" || preferences[key] === "dislike"
+              // ) && styles.inactiveContinueButtonText,
             ]}
           >
             Continue
