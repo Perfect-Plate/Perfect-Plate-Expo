@@ -5,8 +5,9 @@ import { useRouter } from "expo-router";
 import {getMultipleStoredData} from "@/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function HomeScreen() {
+const HomeScreen: React.FC = () => {
   const router = useRouter();
+  const [user, setUser] = useState<any>({});
 
   // Helper function to randomize opacity
   const getRandomOpacity = () => {
@@ -14,11 +15,29 @@ export default function HomeScreen() {
     return opacities[Math.floor(Math.random() * opacities.length)];
   };
   // useEffect(() => {
-  //   const clearData = async () => {
-  //     await AsyncStorage.clear();
+  //   const clearData = () => {
+  //      AsyncStorage.clear().then(r => console.log("Cleared"));
   //   }
-  //   clearData().then(r => {});
+  //   clearData();
   // }, []);
+
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const userData = await AsyncStorage.getItem("user");
+        const user = userData ? JSON.parse(userData) : null;
+
+        if (user && user.status !== false) {
+          router.push("/home");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    getUserData();
+  }, [router]);
 
   return (
     <View style={styles.container}>
@@ -54,7 +73,10 @@ export default function HomeScreen() {
           {/* Sign In Link */}
           <View style={styles.signInContainer}>
             <Text style={styles.signInText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => router.push("/signIn")}>
+            <TouchableOpacity onPress={() => router.push({
+                pathname: "/signIn",
+                params: {from: "home"}
+            })}>
               <Text style={styles.signInLink}>Sign in</Text>
             </TouchableOpacity>
           </View>
@@ -63,6 +85,7 @@ export default function HomeScreen() {
     </View>
   );
 }
+export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {

@@ -6,3 +6,4 @@ export {default as getMultipleStoredData} from './getMultipleStoredData';
 export {default as signUp} from './signUp';
 export {default as signIn} from './signIn';
 export {default as SavePreference} from './savePreference';
+export {default as RecipeGenerate} from './recipeGenerate';

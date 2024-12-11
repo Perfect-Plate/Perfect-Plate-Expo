@@ -228,8 +228,11 @@ const formatCuisinePreferences = () => {
         <TouchableOpacity
             style={styles.generateButton}
             onPress={
-              // signed_in != null && signed_in["status"] === "true" ? handleGeneratePlan : () => router.push("/mealGenerateWaiting")
-            () => router.push("/home")
+              signed_in != null && signed_in["status"] === "true" ? handleGeneratePlan : () => router.push({
+                pathname:"/signUp",
+                params: {from: "overview"}
+              })
+            // () => router.push("/home")
             }
         >
           <Text style={styles.generateButtonText}>

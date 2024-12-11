@@ -9,13 +9,15 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import Toast from "react-native-toast-message";
 import { signUp } from "@/api";
 import { SignUpRequest } from "@/api/signUp";
 
+
 export default function SignUpScreen() {
   const router = useRouter();
+  const {from} = useLocalSearchParams();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -37,7 +39,10 @@ export default function SignUpScreen() {
 
       if (response?.status === 200) {
         await showToast();
-        router.push("/signIn");
+        router.push({
+          pathname:"/signIn",
+          params: {from},
+        });
       } else {
         console.error("Error signing up:", response);
       }
@@ -152,7 +157,10 @@ export default function SignUpScreen() {
         {/* Sign In Link */}
         <View style={styles.signInContainer}>
           <Text style={styles.signInText}>Already have an account? </Text>
-          <TouchableOpacity onPress={() => router.push("/signIn")}>
+          <TouchableOpacity onPress={() => router.push({
+            pathname:"/signIn",
+            params: {from},
+          })}>
             <Text style={styles.signInLink}>Sign in</Text>
           </TouchableOpacity>
         </View>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   View,
   Text,
@@ -6,10 +6,39 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import {RecipeGenRequest} from "@/api/recipeGenerate";
+import RecipeGenerate from "../api/recipeGenerate";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RecipeLoadingScreen = () => {
   const router = useRouter();
+    const searchParams = useLocalSearchParams();
+    const [user, setUser] = useState<any>({}); // Initialize user state
+
+
+  useEffect(() => {
+
+
+      const generateRecipe = async () => {
+                const description: string = searchParams["userDescription"] as string;
+
+                const recipeGenData: RecipeGenRequest = {
+                    userDescription: description,
+                }
+
+                console.log(recipeGenData);
+           const response: any = await RecipeGenerate(recipeGenData);
+                if (response.status === 200) {
+                    router.push({
+                        pathname: "/recipeDetailsScreen",
+                        params: {recipe: JSON.stringify(response.data)},
+                    });
+                }
+        };
+
+        generateRecipe().catch((err) => {}); // Add error handling
+    }, []);
 
   return (
     <View style={styles.container}>

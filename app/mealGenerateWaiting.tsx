@@ -1,15 +1,43 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
+  Animated,
+  Easing,
+  TouchableOpacity, ActivityIndicator,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import {SavePreference} from "@/api";
+import { LocalData } from "@/api/savePreference";
 
 const MealPlanLoadingScreen = () => {
   const router = useRouter();
+  const searchParams = useLocalSearchParams();
+  const spinValue = useRef(new Animated.Value(0)).current;
+
+
+
+  // Spinning Animation
+  // useEffect(() => {
+  //     Animated.loop(
+  //         Animated.timing(spinValue, {
+  //             toValue: 1,
+  //             duration: 1000,
+  //             easing: Easing.linear,
+  //             useNativeDriver: true,
+  //         })
+  //     ).start();
+  // }, [spinValue]);
+
+  useEffect(() => {
+      const generateMeal = async () => {
+           const ldata = searchParams["data"] as unknown as LocalData;
+           const response = await SavePreference({ localData: ldata})
+        };
+
+        generateMeal().catch((err) => {}); // Add error handling
+    }, []);
 
   return (
     <View style={styles.container}>

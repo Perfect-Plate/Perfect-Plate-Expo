@@ -7,13 +7,15 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import NavBar from "./NavBar";
 
 export default function RecipeDetailsScreen() {
   const router = useRouter();
   const [isFavorite, setIsFavorite] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const searchParams = useLocalSearchParams();
+  const recipe = searchParams.recipe ? JSON.parse(searchParams.recipe as string) : null;
 
   const toggleFavorite = () => {
     if (!isFavorite) {
@@ -22,6 +24,14 @@ export default function RecipeDetailsScreen() {
     }
     setIsFavorite((prev) => !prev);
   };
+
+  if (!recipe) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>No recipe details available</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -33,7 +43,7 @@ export default function RecipeDetailsScreen() {
         >
           <Text style={styles.backArrow}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Custom Recipe</Text>
+        <Text style={styles.headerTitle}>{recipe.cuisine || 'Recipe'} Details</Text>
       </View>
 
       {/* Content */}
@@ -41,15 +51,15 @@ export default function RecipeDetailsScreen() {
         {/* Recipe Image */}
         <View style={styles.imageContainer}>
           <Image
-            source={require("@/assets/images/recipeHolder.jpeg")} // Replace with your image source
+            source={require("@/assets/images/recipeHolder.jpeg")}
             style={styles.recipeImage}
           />
           <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
             <Image
               source={
                 isFavorite
-                  ? require("@/assets/images/heartFilled.png") // Red heart image
-                  : require("@/assets/images/heart.png") // Empty heart image
+                  ? require("@/assets/images/heartFilled.png")
+                  : require("@/assets/images/heart.png")
               }
               style={styles.heartIcon}
             />
@@ -57,12 +67,8 @@ export default function RecipeDetailsScreen() {
         </View>
 
         {/* Recipe Details */}
-        <Text style={styles.recipeTitle}>Classic Spaghetti Bolognese</Text>
-        <Text style={styles.recipeDescription}>
-          Classic Spaghetti Bolognese is a hearty Italian-inspired dish
-          featuring a rich, savory meat sauce simmered with tomatoes, garlic,
-          onions, and aromatic herbs.
-        </Text>
+        <Text style={styles.recipeTitle}>{recipe.title || 'Untitled Recipe'}</Text>
+        <Text style={styles.recipeDescription}>{recipe.description || 'No description available'}</Text>
 
         {/* Divider */}
         <View style={styles.divider} />
@@ -71,15 +77,32 @@ export default function RecipeDetailsScreen() {
         <View style={styles.infoRow}>
           <View style={styles.infoColumn}>
             <Text style={styles.infoHeader}>Servings</Text>
-            <Text style={styles.infoText}>1</Text>
+            <Text style={styles.infoText}>{recipe.servings || 'N/A'}</Text>
           </View>
           <View style={styles.infoColumn}>
             <Text style={styles.infoHeader}>Prep time</Text>
-            <Text style={styles.infoText}>20 min</Text>
+            <Text style={styles.infoText}>{recipe.prep_time || 'N/A'} min</Text>
           </View>
           <View style={styles.infoColumn}>
             <Text style={styles.infoHeader}>Cook time</Text>
-            <Text style={styles.infoText}>30 min</Text>
+            <Text style={styles.infoText}>{recipe.cook_time || 'N/A'} min</Text>
+          </View>
+        </View>
+
+        {/* Nutritional Info */}
+        <View style={styles.divider} />
+        <View style={styles.infoRow}>
+          <View style={styles.infoColumn}>
+            <Text style={styles.infoHeader}>Calories</Text>
+            <Text style={styles.infoText}>{recipe.calories || 'N/A'}</Text>
+          </View>
+          <View style={styles.infoColumn}>
+            <Text style={styles.infoHeader}>Protein</Text>
+            <Text style={styles.infoText}>{recipe.protein || 'N/A'}g</Text>
+          </View>
+          <View style={styles.infoColumn}>
+            <Text style={styles.infoHeader}>Fat</Text>
+            <Text style={styles.infoText}>{recipe.fat || 'N/A'}g</Text>
           </View>
         </View>
 
@@ -89,40 +112,29 @@ export default function RecipeDetailsScreen() {
         {/* Ingredients Section */}
         <Text style={styles.sectionTitle}>Ingredients</Text>
         <View style={styles.listContainer}>
-          {[
-            "400g (14 oz) spaghetti",
-            "1 medium onion, finely chopped",
-            "500g (1 lb) ground beef",
-            "1 can (400g) diced tomatoes",
-            "2 tablespoons tomato paste",
-            "1 teaspoon dried oregano",
-            "1 teaspoon dried basil",
-            "1 cup beef stock",
-            "Salt and pepper, to taste",
-            "Fresh parsley, for garnish",
-            "Grated Parmesan cheese, for serving",
-          ].map((item, index) => (
-            <Text key={index} style={styles.listItem}>
-              • {item}
-            </Text>
-          ))}
+          {recipe.ingredients && recipe.ingredients.length > 0 ? (
+            recipe.ingredients.map((item: any, index: number) => (
+              <Text key={index} style={styles.listItem}>
+                • {item}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.listItem}>No ingredients listed</Text>
+          )}
         </View>
 
         {/* Instructions Section */}
         <Text style={styles.sectionTitle}>Instructions</Text>
         <View style={styles.listContainer}>
-          {[
-            "Prepare the ingredients. Chop onion, garlic, carrot, and celery finely.",
-            "Heat olive oil in a large skillet over medium heat. Add onion, garlic, carrot, and celery. Sauté for 5 minutes until softened.",
-            "Add the ground beef to the skillet. Cook until browned, breaking up the meat with a spoon, about 8 minutes.",
-            "Stir in diced tomatoes, tomato paste, oregano, basil, and beef stock. Season with salt and pepper. Lower the heat and let it simmer uncovered for 20–30 minutes, stirring occasionally.",
-            "Bring a large pot of salted water to a boil. Cook spaghetti according to package instructions. Drain and set aside.",
-            "Toss the cooked spaghetti with the Bolognese sauce or serve the sauce over the pasta. Garnish with parsley and grated Parmesan cheese.",
-          ].map((item, index) => (
-            <Text key={index} style={styles.listItem}>
-              • {item}
-            </Text>
-          ))}
+          {recipe.instructions && recipe.instructions.length > 0 ? (
+            recipe.instructions.map((item: any, index: number) => (
+              <Text key={index} style={styles.listItem}>
+                {index + 1}. {item}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.listItem}>No instructions available</Text>
+          )}
         </View>
 
         {/* Buttons */}
@@ -155,10 +167,18 @@ export default function RecipeDetailsScreen() {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#EDE9E8",
+  },
+  errorText: {
+    fontSize: 18,
+    fontFamily: "Poppins",
+    textAlign: "center",
+    marginTop: 50,
+    color: "#1B1918",
   },
   header: {
     height: 110,

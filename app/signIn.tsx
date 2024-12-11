@@ -9,7 +9,7 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import SignIn, { SignInRequest } from "@/api/signIn";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,6 +17,7 @@ import storeData from "@/api/preference_form";
 
 export default function SignInScreen() {
   const router = useRouter();
+  const { from } = useLocalSearchParams();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -101,7 +102,11 @@ export default function SignInScreen() {
             if (response?.status === 200) {
               await showToast();
               await storeData("signed_in", { id: email, status: "true" });
-              router.push("/overview");
+                if (from === "overview") {
+                    router.push("/overview");
+                } else {
+                    router.push("/home");
+                }
             } else {
               console.error("Error signing in:", response);
             }
@@ -113,7 +118,9 @@ export default function SignInScreen() {
         {/* Sign Up Link */}
         <View style={styles.signUpContainer}>
           <Text style={styles.signUpText}>Don’t have an account? </Text>
-          <TouchableOpacity onPress={() => router.push("/signUp")}>
+          <TouchableOpacity onPress={() => router.push({
+            pathname: "/signUp",
+          })}>
             <Text style={styles.signUpLink}>Sign up</Text>
           </TouchableOpacity>
         </View>
