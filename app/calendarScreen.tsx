@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,8 +8,37 @@ import {
   ScrollView,
 } from "react-native";
 import NavBar from "./NavBar";
+import {router, useLocalSearchParams} from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// Type definition for the recipe
+type Recipe = {
+  id?: string;  // Make ID optional
+  title: string;
+  description: string;
+  meal_type: string;
+  image_url: string | null;
+  ingredients: string[];
+  instructions: string[];
+};
+
+// Type definition for the day's data
+type DayData = {
+  date: string;
+  recipes: Recipe[];
+};
+
+const generateUniqueId = (item: Recipe, index: number): string => {
+  // If ID already exists and is unique, return it
+  if (item.id) return item.id;
+
+  // Generate a unique ID based on title, meal type, and index
+  return `${item.title}-${item.meal_type}-${index}`.replace(/\s+/g, '-').toLowerCase();
+};
 
 const calendarScreen: React.FC = () => {
+  const searchParams = useLocalSearchParams();
+  const mealPlan = searchParams.mealPlan ? JSON.parse(searchParams.mealPlan as string) : null;
   const today = new Date();
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(
     new Date(
@@ -18,7 +47,28 @@ const calendarScreen: React.FC = () => {
       today.getDate() - today.getDay()
     )
   );
-  const [selectedDay, setSelectedDay] = useState<Date | null>(today); // Default selected day is today
+  const [selectedDay, setSelectedDay] = useState<Date | null>(today);
+  const [mealData, setMealData] = useState<DayData[]>([]);
+
+  // Fetch meal data (replace with actual API call)
+  useEffect(() => {
+    if(!mealPlan) {
+      const fetchMealsFromLocalStorage = async () => {
+        const mealPlanLocal:any = await AsyncStorage.getItem("mealPlan");
+        const mealPlanLocalData = JSON.parse(mealPlanLocal);
+        if (!mealPlanLocalData) {
+          return;
+        }
+        setMealData(mealPlanLocalData.days);
+      };
+      fetchMealsFromLocalStorage().then(r => {});
+    } else {
+      const jsonData = {
+        days: mealPlan.days,
+      };
+      setMealData(jsonData.days);
+    }
+  }, []);
 
   const getWeek = (startDate: Date) => {
     const week = [];
@@ -35,22 +85,36 @@ const calendarScreen: React.FC = () => {
 
   const isDaySelectable = (date: Date) => {
     const today = new Date();
-    const twoWeeksLater = new Date(
+
+    // If no meal plan, default to 2 weeks
+    if (!mealData || mealData.length === 0) {
+      const twoWeeksLater = new Date(
         today.getFullYear(),
         today.getMonth(),
         today.getDate() + 14
-    );
+      );
 
-    // Include the current day explicitly in the selectable range
-    return (
-        date.toDateString() === today.toDateString() || // Ensure today is selectable
+      return (
+        date.toDateString() === today.toDateString() ||
         (date >= today && date <= twoWeeksLater)
+      );
+    }
+
+    // Find the first and last dates in the meal plan
+    const planDates = mealData.map(day => new Date(day.date));
+    const firstPlanDate = new Date(Math.min(...planDates.map(d => d.getTime())));
+    const lastPlanDate = new Date(Math.max(...planDates.map(d => d.getTime())));
+
+    // Extend the selectable range to the plan's date range
+    return (
+      date.toDateString() === today.toDateString() ||
+      (date >= firstPlanDate && date <= lastPlanDate)
     );
-};
+  };
 
   const toggleDay = (date: Date) => {
     if (isDaySelectable(date)) {
-      setSelectedDay(date); // Allow only one day to be selected
+      setSelectedDay(date);
     }
   };
 
@@ -94,7 +158,92 @@ const calendarScreen: React.FC = () => {
     });
   };
 
+  const getRecipesForSelectedDay = () => {
+    if (!selectedDay) return [];
+
+    const formattedDate = selectedDay.toISOString().split('T')[0];
+    const dayData = mealData.find(day => 
+      new Date(day.date).toISOString().split('T')[0] === formattedDate
+    );
+
+    return dayData ? dayData.recipes : [];
+  };
+
+  const groupRecipesByMealType = (recipes: Recipe[]) => {
+    return {
+      Breakfast: recipes.filter(r => r.meal_type === 'Breakfast'),
+      Lunch: recipes.filter(r => r.meal_type === 'Lunch'),
+      Dinner: recipes.filter(r => r.meal_type === 'Dinner')
+    };
+  };
+
   const week = getWeek(currentWeekStart);
+  const recipesForSelectedDay = getRecipesForSelectedDay();
+  const groupedRecipes = groupRecipesByMealType(recipesForSelectedDay);
+
+  // Modify the Section component to use unique IDs
+  const Section: React.FC<{
+    title: string;
+    items: Recipe[];
+  }> = ({ title, items }) => (
+    <View style={styles.section}>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+      </View>
+      <View style={styles.sectionContent}>
+        {items.length > 0 ? (
+          items.map((item, index) => {
+            // Generate or ensure a unique ID
+            const uniqueId = generateUniqueId(item, index);
+            
+            return (
+              <TouchableOpacity
+                key={uniqueId}
+                onPress={() => {
+                  // Ensure the item has an ID before stringifying
+                  const itemToPass = {
+                    ...item,
+                    id: uniqueId
+                  };
+                  router.push(
+                    {
+                      pathname: "/recipeDetailsScreen",
+                      params: {recipe: JSON.stringify(itemToPass)},
+                    }
+                  )
+                }}
+              >
+                <View style={styles.itemContainer}>
+                  {/* Placeholder image since image_url is null in the data */}
+                  <Image 
+                    style={styles.recipeImage} 
+                    source={require("@/assets/images/1.png")} 
+                  />
+                  <View style={styles.textContainer}>
+                    <Text
+                      style={styles.recipeName}
+                      numberOfLines={2}
+                      ellipsizeMode="tail"
+                    >
+                      {item.title}
+                    </Text>
+                  </View>
+                  <TouchableOpacity style={styles.moreIconContainer}>
+                    <Image
+                      style={styles.moreIcon}
+                      source={require("@/assets/images/more.png")}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            );
+          })
+        ) : (
+          <Text style={styles.noMealsText}>No meals planned</Text>
+        )}
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -159,46 +308,15 @@ const calendarScreen: React.FC = () => {
       >
         <Section
           title="Breakfast"
-          items={[
-            {
-              image: require("@/assets/images/1.png"),
-              name: "Oatmeal with Strawberries",
-            },
-          ]}
+          items={groupedRecipes.Breakfast}
         />
         <Section
           title="Lunch"
-          items={[
-            {
-              image: require("@/assets/images/2.png"),
-              name: "Garlic butter shrimp",
-            },
-            {
-              image: require("@/assets/images/3.png"),
-              name: "Mushroom risotto",
-            },
-            {
-              image: require("@/assets/images/4.png"),
-              name: "Grilled salmon with lemon butter sauce",
-            },
-            {
-              image: require("@/assets/images/5.png"),
-              name: "Creamy pesto pasta",
-            },
-          ]}
+          items={groupedRecipes.Lunch}
         />
         <Section
           title="Dinner"
-          items={[
-            {
-              image: require("@/assets/images/6.png"),
-              name: "Steak with peppercorn sauce",
-            },
-            {
-              image: require("@/assets/images/7.png"),
-              name: "Pasta with creamy alfredo sauce",
-            },
-          ]}
+          items={groupedRecipes.Dinner}
         />
       </ScrollView>
 
@@ -215,40 +333,6 @@ const calendarScreen: React.FC = () => {
   );
 };
 
-// Reusable Section Component
-const Section: React.FC<{
-    title: string;
-    items: { image: any; name: string }[];
-  }> = ({ title, items }) => (
-    <View style={styles.section}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-      </View>
-      <View style={styles.sectionContent}>
-        {items.map((item, index) => (
-          <View key={index} style={styles.itemContainer}>
-            <Image style={styles.recipeImage} source={item.image} />
-            <View style={styles.textContainer}>
-              <Text
-                style={styles.recipeName}
-                numberOfLines={2}
-                ellipsizeMode="tail"
-              >
-                {item.name}
-              </Text>
-            </View>
-            <TouchableOpacity style={styles.moreIconContainer}>
-              <Image
-                style={styles.moreIcon}
-                source={require("@/assets/images/more.png")}
-              />
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
-    </View>
-  );
-  
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -439,6 +523,11 @@ const Section: React.FC<{
       color: "#737170",
       marginTop: 4,
     },
+    noMealsText: {
+      textAlign: 'center',
+      color: '#888',
+      padding: 15,
+    }
   });
   
   export default calendarScreen;

@@ -1,6 +1,9 @@
 import axios from "axios";
 import getPreferenceFormData from "@/api/get_preference_form_data";
-import MealPlanGenerate from "@/api/mealPlan";
+// import MealPlanGenerate from "@/api/mealPlan";
+// import {GetMealPlanGenerate} from "@/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import GetMealPlanGenerate from "@/api/getMealPlan";
 
 export interface PreferenceRequest {
     user_id: string;
@@ -105,15 +108,31 @@ const restrictedCuisines = Object.entries(localData.cuisine || {})
             }
         );
 
-        let mealGenerateResponse;
+        // let mealGenerateResponse;
+        //
+        // if (response?.status === 200) {
+        //     mealGenerateResponse = await MealPlanGenerate({
+        //         user_id: user.id,
+        //         dates: localData.mealPlanCalendar,
+        //         userDescription: localData.mealDescription,
+        //         url: "",
+        //     });
+        // }else {
+        //     throw new Error(
+        //         `SavePreference failed: ${
+        //             response?.data || response?.status
+        //         }`
+        //     );
+        // }
+        //
+        //
+
+        // For demo purposes, we'll just return the response
+        // GetPlanGenerate
+        let mealGenerateResponse:any;
 
         if (response?.status === 200) {
-            mealGenerateResponse = await MealPlanGenerate({
-                user_id: user.id,
-                dates: localData.mealPlanCalendar,
-                userDescription: localData.mealDescription,
-                url: "",
-            });
+            mealGenerateResponse = await GetMealPlanGenerate();
         }else {
             throw new Error(
                 `SavePreference failed: ${
@@ -121,8 +140,10 @@ const restrictedCuisines = Object.entries(localData.cuisine || {})
                 }`
             );
         }
-        //
-        //
+
+        console.log("mealGenerateResponse", mealGenerateResponse.data);
+
+
         if (mealGenerateResponse?.status !== 200) {
             throw new Error(
                 `MealPlanGenerate failed: ${
@@ -130,7 +151,7 @@ const restrictedCuisines = Object.entries(localData.cuisine || {})
                 }`
             );
         }
-        console.log("MealPlanGenerate response:", mealGenerateResponse);
+        await AsyncStorage.setItem("mealPlan", JSON.stringify(mealGenerateResponse.data));
         return mealGenerateResponse;
 
     } catch (error) {

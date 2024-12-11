@@ -17,23 +17,18 @@ const MealPlanLoadingScreen = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
 
 
-
-  // Spinning Animation
-  // useEffect(() => {
-  //     Animated.loop(
-  //         Animated.timing(spinValue, {
-  //             toValue: 1,
-  //             duration: 1000,
-  //             easing: Easing.linear,
-  //             useNativeDriver: true,
-  //         })
-  //     ).start();
-  // }, [spinValue]);
-
   useEffect(() => {
       const generateMeal = async () => {
            const ldata = searchParams["data"] as unknown as LocalData;
            const response = await SavePreference({ localData: ldata})
+              if (response?.status === 200) {
+                 router.push({
+                    pathname: "/calendarScreen",
+                    params: { mealPlan: JSON.stringify(response.data) },
+                 });
+              } else {
+                 console.error("Error generating meal plan:", response);
+              }
         };
 
         generateMeal().catch((err) => {}); // Add error handling

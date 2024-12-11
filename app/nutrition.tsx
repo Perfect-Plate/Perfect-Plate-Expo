@@ -89,15 +89,13 @@ const NutritionalPreferences: React.FC = () => {
       <TouchableOpacity
         style={[
           styles.continueButton,
-          !selectedOption && styles.inactiveContinueButton,
         ]}
         onPress={handleContinue}
-        disabled={!selectedOption}
       >
         <Text
           style={[
             styles.continueButtonText,
-            !selectedOption && styles.inactiveContinueButtonText,
+            // !selectedOption && styles.inactiveContinueButtonText,
           ]}
         >
           Continue

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
 
 import { useRouter } from "expo-router";
-import {getMultipleStoredData} from "@/api";
+// import {getMultipleStoredData} from "@/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen: React.FC = () => {
@@ -14,6 +14,7 @@ const HomeScreen: React.FC = () => {
     const opacities = [0.7, 0.6, 0.5, 0.4, 0.3];
     return opacities[Math.floor(Math.random() * opacities.length)];
   };
+  
   // useEffect(() => {
   //   const clearData = () => {
   //      AsyncStorage.clear().then(r => console.log("Cleared"));
