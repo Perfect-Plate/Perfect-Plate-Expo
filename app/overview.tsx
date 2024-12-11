@@ -229,7 +229,7 @@ const formatCuisinePreferences = () => {
             style={styles.generateButton}
             onPress={
               // signed_in != null && signed_in["status"] === "true" ? handleGeneratePlan : () => router.push("/mealGenerateWaiting")
-            () => router.push("/home")
+            () => router.push("/mealGenerateWaiting")
             }
         >
           <Text style={styles.generateButtonText}>

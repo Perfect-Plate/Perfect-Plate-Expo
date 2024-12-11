@@ -60,7 +60,7 @@ export default function RecipeGeneratorScreen() {
       </View>
 
       {/* NavBar */}
-      <NavBar currentPage={null} onNavigate={(page) => console.log(page)} />
+      <NavBar currentPage={null}/>
     </ImageBackground>
   );
 }

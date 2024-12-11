@@ -101,7 +101,7 @@ export default function SignInScreen() {
             if (response?.status === 200) {
               await showToast();
               await storeData("signed_in", { id: email, status: "true" });
-              router.push("/overview");
+              router.push("/home");
             } else {
               console.error("Error signing in:", response);
             }
