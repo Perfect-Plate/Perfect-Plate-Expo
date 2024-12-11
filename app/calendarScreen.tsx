@@ -239,7 +239,9 @@ const calendarScreen: React.FC = () => {
             );
           })
         ) : (
-          <Text style={styles.noMealsText}>No meals planned</Text>
+          <View>
+              <Text style={styles.noMealsText}>No meals planned</Text>
+          </View>
         )}
       </View>
     </View>
@@ -306,7 +308,11 @@ const calendarScreen: React.FC = () => {
         style={styles.body}
         contentContainerStyle={{ paddingBottom: 200 }}
       >
-        <Section
+        {
+          groupedRecipes.Breakfast.length > 0 && groupedRecipes.Lunch && groupedRecipes.Dinner ? (
+            (
+              <>
+          <Section
           title="Breakfast"
           items={groupedRecipes.Breakfast}
         />
@@ -318,6 +324,23 @@ const calendarScreen: React.FC = () => {
           title="Dinner"
           items={groupedRecipes.Dinner}
         />
+              </>
+            )
+          ) : (
+              <View style={styles.emptyContainer}>
+            <Image
+              source={require("@/assets/images/empty.png")}
+              style={styles.emptyImage}
+            />
+            <Text style={styles.mealText}>Your meal plan is empty</Text>
+            <Text style={styles.emptyText}>
+              You haven’t set up a meal plan yet. Let’s create one and fill your
+              calendar!
+            </Text>
+          </View>
+          )
+        }
+        
       </ScrollView>
 
       {/* Floating Meal Plan Section */}
@@ -527,7 +550,32 @@ const calendarScreen: React.FC = () => {
       textAlign: 'center',
       color: '#888',
       padding: 15,
-    }
+    },
+    emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyImage: {
+    width: 150,
+    height: 150,
+    resizeMode: "contain",
+    marginBottom: 16,
+  },
+  mealText: {
+    fontSize: 24,
+    fontWeight: "500",
+    color: "#333",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#737170",
+    textAlign: "center",
+    lineHeight: 24,
+    paddingHorizontal: 16,
+  },
   });
   
   export default calendarScreen;

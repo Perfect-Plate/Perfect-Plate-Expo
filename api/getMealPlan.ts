@@ -4,7 +4,7 @@ const GetMealPlanGenerate = async () => {
 
     try {
         const response = await axios.get(
-            "http://localhost:8000/v1/ai/get_meal_plan/?user_id=Me%40pplate.com&meal_plan_id=baa1dd1e-9104-4fae-9ac1-85b04ab55067",
+            "http://localhost:8000/v1/ai/get_meal_plan/?user_id=Me%40pplate.com&meal_plan_id=96aab16e-aadf-413e-874d-068f0a73f0d1",
             {
                 headers: {
                     accept: "application/json",
