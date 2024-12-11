@@ -38,7 +38,7 @@ export default function RecipeDetailsScreen() {
 
       {/* Content */}
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Recipe Image */}
+        {/* Recipe Image
         <View style={styles.imageContainer}>
           <Image
             source={require("@/assets/images/recipeHolder.jpeg")} // Replace with your image source
@@ -54,7 +54,7 @@ export default function RecipeDetailsScreen() {
               style={styles.heartIcon}
             />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         {/* Recipe Details */}
         <Text style={styles.recipeTitle}>Classic Spaghetti Bolognese</Text>
@@ -150,7 +150,7 @@ export default function RecipeDetailsScreen() {
       )}
 
       {/* NavBar */}
-      <NavBar currentPage={null} onNavigate={(page) => console.log(page)} />
+      <NavBar currentPage={null}/>
     </View>
   );
 }
@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#1B1918",
     marginBottom: 16,
+    marginTop: 32,
   },
   recipeDescription: {
     fontSize: 16,
