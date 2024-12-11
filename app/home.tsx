@@ -94,7 +94,8 @@ const Home: React.FC = () => {
       </View>
 
       {/* Navigation Bar */}
-      <NavBar currentPage="home" onNavigate={(page) => console.log(page)} />
+      <NavBar currentPage="home" />
+
     </View>
   );
 };
